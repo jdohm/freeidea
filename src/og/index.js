@@ -89,6 +89,7 @@ import { Planet } from './scene/Planet.js';
 import { RenderNode } from './scene/RenderNode.js';
 
 import { Popup } from './Popup.js';
+import { Idear } from './Idear.js';
 
 const version = {
     version: __VERSION__
@@ -194,5 +195,6 @@ export {
     entity,
     Entity,
     Geoid,
-    Popup
+    Popup,
+    Idear
 };

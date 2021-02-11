@@ -15,6 +15,7 @@ node_modules
 
 *.sdf
 *.map
+*.swp
 api
 
 package-lock.json
