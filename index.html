@@ -1,9 +1,9 @@
 <html>
 
 <head>
-    <title>OpenGlobus - Earth planet</title>
+    <title>FreeIdea</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../css/og.css" type="text/css" />
+    <link rel="stylesheet" href="./css/og.css" type="text/css" />
 </head>
 
 <body>
@@ -11,14 +11,15 @@
     <script type="module">
         'use strict';
 
-        import { Globe } from '../../src/og/Globe.js';
-        import { GlobusTerrain } from '../../src/og/terrain/GlobusTerrain.js';
-        import { XYZ } from '../../src/og/layer/XYZ.js';
-        import { WMS } from '../../src/og/layer/WMS.js';
-        import { Vector } from '../../src/og/layer/Vector.js';
-        import { Vec2 } from '../../src/og/math/Vec2.js';
-        import { Entity } from '../../src/og/entity/Entity.js';
-        import { Idear } from '../../src/og/Idear.js';
+        import { Globe } from './src/og/Globe.js';
+        import { GlobusTerrain } from './src/og/terrain/GlobusTerrain.js';
+        import { XYZ } from './src/og/layer/XYZ.js';
+        import { WMS } from './src/og/layer/WMS.js';
+        import { Vector } from './src/og/layer/Vector.js';
+        import { Vec2 } from './src/og/math/Vec2.js';
+        import { Entity } from './src/og/entity/Entity.js';
+        import { Idea } from './src/og/Idea.js';
+
 
         let pointLayer = new Vector("points", {
             'clampToGround': true,
@@ -26,7 +27,7 @@
                 'name': 'Blue Marker',
                 'lonlat': [8.19, 46.73],
                 'billboard': {
-                    'src': 'neg.png',
+                    'src': './media/neg.png',
                     'size': [12, 48],
                     'offset': [0, 24]
                 }
@@ -95,26 +96,26 @@
             }
         }, globe.planet);
 
-        let myIdear = new Idear({
+        let myIdea = new Idea({
             planet: globe.planet,
-            offset: [0, -183],
+            offset: [0, -235],
             visibility: false
         });
 
 	function myFunction(){
-            myIdear.setVisibility(true);
+            myIdea.setVisibility(true);
 	}
 
 	function myHideFunction(){
-            myIdear.setVisibility(false);
+            myIdea.setVisibility(false);
 	}
 
-	function myCreateIdearFunction(ll){
+	function myCreateIdeaFunction(ll){
             pointLayer.add(new Entity({
                 'name': 'New Marker',
                 'lonlat': ll,
                 'billboard': {
-                    'src': 'pos.png',
+                    'src': './media/pos.png',
                     'size': [12, 48],
                     'offset': [0, 24]
                 }
@@ -125,26 +126,20 @@
 
         globe.planet.renderer.events.on("lclick", function (e) {
             if (pickingObject) {
-            //myIdear.setVisibility(true);
+            //myIdea.setVisibility(true);
 	    }
-	    else {//New Idear
-	//idear start
+	    else {//New Idea
+	//idea start
             var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
 
             let groundPos = globe.planet.getCartesianFromMouseTerrain();
-            myIdear.setCartesian3v(groundPos);
+            myIdea.setCartesian3v(groundPos);
 
-	    myIdear.setContent(`<H3>Please discribe your Idear:<\H3>
-		<textarea id="idearText" style="overflow:auto;resize:none" rows="5" cols="60" name="text" placeholder="Enter text"></textarea>
-	    <p>Add topics</p>
-		<textarea id="categoriesText" style="overflow:auto;resize:none" rows="1" cols="60" name="text" placeholder="social, environment, it, ..."></textarea>
-	    <p>Needed skills</p>
-		<textarea id="skillsText" style="overflow:auto;resize:none" rows="1" cols="60" name="text" placeholder="programming, management, UI-Design, knitting, ..."></textarea>
-	    `);
+	    myIdea.setContent(``);
 	
-			myIdear.setFunction(myCreateIdearFunction, ll);
-            myIdear.setVisibility(true);
-	//idear end
+			myIdea.setFunction(myCreateIdeaFunction, ll);
+            myIdea.setVisibility(true);
+	//idea end
 	    }
 
         });
