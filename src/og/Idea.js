@@ -120,7 +120,7 @@ class Idea {
             var ideaText = document.getElementById('ideaText').value;
             xhttp.open("POST", "submitIdea", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send("nameText="+nameText+"&ideaText="+ideaText);  
+            xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+this._ll.lon+"&lat="+this._ll.lat);  
             this.hide();
             //alert("nameText="+nameText+"&ideaText="+ideaText);
         });

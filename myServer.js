@@ -87,24 +87,38 @@ http.createServer(function (req, res) {
           console.log('Connected to the SQlite database.');
         });
         //Write to Database (use in POST answer to save data)
-        db.run('INSERT INTO Idea(title,description) VALUES(?1,?2)', {
+        db.serialize(function () {
+          var lastID;
+          db.run('INSERT INTO Idea(title,description) VALUES(?1,?2)', {
             1: formData.nameText,
             2: formData.ideaText
-          }, function(err){
+          }, function (err) {
             if (err) {
               return console.log(err.message);
             }
             // get the last insert id
-            console.log(`A row has been inserted with rowid ${this.lastID}`);
+            console.log(`A row has been inserted into Idea with rowid ${this.lastID}`);
+            db.run('INSERT INTO Places(lon,lat,IdeaID) VALUES(?1,?2,?3)', {
+              1: formData.lon,
+              2: formData.lat,
+              3: this.lastID
+            }, function (err) {
+              if (err) {
+                return console.log(err.message);
+              }
+              // get the last insert id
+              console.log(`A row has been inserted with rowid ${this.lastID}`);
+            });
+            db.close();
           });
-        db.close();
+        })
       });
     } else {
-      res.writeHead(404, 'Resource Not Found', {'Content-Type': 'text/html'});
+      res.writeHead(404, 'Resource Not Found', { 'Content-Type': 'text/html' });
       res.end('<!doctype html><html><head><title>404</title></head><body>404: Resource Not Found</body></html>');
     }
   } else {
-    res.writeHead(405, 'Method Not Supported', {'Content-Type': 'text/html'});
+    res.writeHead(405, 'Method Not Supported', { 'Content-Type': 'text/html' });
     return res.end('<!doctype html><html><head><title>405</title></head><body>405: Method Not Supported</body></html>');
   }
 }).listen(parseInt(port));
