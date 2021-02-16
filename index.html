@@ -20,6 +20,40 @@
         import { Entity } from './src/og/entity/Entity.js';
         import { Idea } from './src/og/Idea.js';
 
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var obj = JSON.parse(this.responseText);
+                //Object.keys(this.responseText).forEach(key => {
+                    //console.log(key, obj[key].LON);
+                //});
+
+                for (var key in obj) {
+                    // skip loop if the property is from prototype
+                    if (!obj.hasOwnProperty(key)) continue;
+
+                    console.log('lon: ' + obj[key].LON + ' lat: ' + obj[key].LAT + ' IdeaID: ' + obj[key].IDEAID);
+                    myCreateIdea(obj[key].LON, obj[key].LAT);
+                    }
+            }
+        };
+        //xhttp.setRequestHeader("Accept", "application/json");
+        //xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.open("GET", "getIdeas", true);
+        xhttp.send();
+
+	   function myCreateIdea(lon, lat, id){
+         pointLayer.add(new Entity({
+             'name': 'New Marker',
+             'lonlat': [lon, lat],
+             'billboard': {
+                 'src': './media/pos.png',
+                 'size': [12, 48],
+                 'offset': [0, 24]
+             }
+         }));
+	   }
+
 
         let pointLayer = new Vector("points", {
             'clampToGround': true,
