@@ -33,7 +33,7 @@
                     if (!obj.hasOwnProperty(key)) continue;
 
                     console.log('lon: ' + obj[key].LON + ' lat: ' + obj[key].LAT + ' IdeaID: ' + obj[key].IDEAID);
-                    myCreateIdea(obj[key].LON, obj[key].LAT);
+                    myCreateIdea(obj[key].LON, obj[key].LAT, obj[key].IDEAID);
                     }
             }
         };
@@ -44,7 +44,7 @@
 
 	   function myCreateIdea(lon, lat, id){
          pointLayer.add(new Entity({
-             'name': 'New Marker',
+             'name': id,
              'lonlat': [lon, lat],
              'billboard': {
                  'src': './media/pos.png',
@@ -53,7 +53,6 @@
              }
          }));
 	   }
-
 
         let pointLayer = new Vector("points", {
             'clampToGround': true,
@@ -160,6 +159,7 @@
 
         globe.planet.renderer.events.on("lclick", function (e) {
             if (pickingObject) {
+                alert("name: " + e.pickingObject.properties.name);
             //myIdea.setVisibility(true);
 	    }
 	    else {//New Idea
