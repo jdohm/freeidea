@@ -44,6 +44,7 @@ import { Geometry } from './entity/Geometry.js';
 import { Label } from './entity/Label.js';
 import { PointCloud } from './entity/PointCloud.js';
 import { Polyline } from './entity/Polyline.js';
+import { IdeaEntity } from './IdeaEntity.js';
 
 import { input } from './input/input.js';
 
@@ -90,6 +91,7 @@ import { RenderNode } from './scene/RenderNode.js';
 
 import { Popup } from './Popup.js';
 import { Idea } from './Idea.js';
+import { ShowIdea } from './ShowIdea.js';
 
 const version = {
     version: __VERSION__

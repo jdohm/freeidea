@@ -4,6 +4,9 @@
     <title>FreeIdea</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/og.css" type="text/css" />
+    <meta name="author" content="Jannis Dohm"><!-- based on openglobus.org -->
+    <meta charset="UTF-8">
+   <link rel="icon" type="image/svg+xml" href="./media/favicon.svg">
 </head>
 
 <body>
@@ -18,6 +21,7 @@
         import { Vector } from './src/og/layer/Vector.js';
         import { Vec2 } from './src/og/math/Vec2.js';
         import { Entity } from './src/og/entity/Entity.js';
+        import { IdeaEntity } from './src/og/IdeaEntity.js';
         import { Idea } from './src/og/Idea.js';
 
         var xhttp = new XMLHttpRequest();
@@ -43,7 +47,7 @@
         xhttp.send();
 
 	   function myCreateIdea(lon, lat, id){
-         pointLayer.add(new Entity({
+         pointLayer.add(new IdeaEntity({
              'name': id,
              'lonlat': [lon, lat],
              'billboard': {
@@ -56,24 +60,6 @@
 
         let pointLayer = new Vector("points", {
             'clampToGround': true,
-            'entities': [{
-                'name': 'Blue Marker',
-                'lonlat': [8.19, 46.73],
-                'billboard': {
-                    'src': './media/neg.png',
-                    'size': [12, 48],
-                    'offset': [0, 24]
-                }
-            }, {
-                'name': 'label',
-                'lonlat': [8.25, 46.74],
-                'label': {
-                    'text': 'Touch me',
-                    'size': [35],
-                    'outlineColor': "rgba(0,0,0,.5)",
-		    'outline': 0.3
-                }
-            }],
             'async': false
         });
 
@@ -159,7 +145,8 @@
 
         globe.planet.renderer.events.on("lclick", function (e) {
             if (pickingObject) {
-                alert("name: " + e.pickingObject.properties.name);
+                //alert("name: " + e.pickingObject.properties.name);
+                e.pickingObject.showIdea(globe.planet);
             //myIdea.setVisibility(true);
 	    }
 	    else {//New Idea
@@ -170,8 +157,7 @@
             myIdea.setCartesian3v(groundPos);
 
 	    myIdea.setContent(``);
-	
-			myIdea.setFunction(myCreateIdeaFunction, ll);
+			    myIdea.setFunction(myCreateIdea, ll);
             myIdea.setVisibility(true);
 	//idea end
 	    }

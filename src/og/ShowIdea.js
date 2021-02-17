@@ -5,25 +5,35 @@ import { Vec3 } from './math/Vec3.js';
 import { getHTML, parseHTML, createLonLat } from './utils/shared.js';
 
 const TEMPLATE =
-    `<div class="og-idear {className}">
-      <div class="og-idear-content-wrapper">
-        <div class="og-idear-content"></div>
-		<div>
-		<button style="margin-left: 40px" class="save-btn" type="button">Save and publish idear</button>
-		<button style="margin-left: 4px" class="close-btn" type="button">Cancel</button>
-		</div>
+    `<div class="og-idea {className}">
+      <div class="og-idea-content-wrapper">
+        <div class="og-idea-content"></div>
+        <form method="POST" action="submitShowIdea" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded"  target="_blank">
+        <div id="og-popup-title"><\div>
+		<textarea id="nameText" style="overflow:auto;resize:none" rows="1" cols="60" name="nameText" placeholder="Using Peanuts to end world hunger"></textarea>
+        <H3>Please describe your ShowIdea:<\H3>
+		<textarea id="ideaText" style="overflow:auto;resize:none" rows="5" cols="60" name="ideaText" placeholder="Enter text"></textarea>
+	    <p>Add topics</p>
+		<textarea id="categoriesText" style="overflow:auto;resize:none" rows="1" cols="60" name="categoriesText" placeholder="social, environment, it, ..."></textarea>
+	    <p>Needed skills</p>
+		<textarea id="skillsText" style="overflow:auto;resize:none" rows="1" cols="60" name="skillsText" placeholder="programming, management, UI-Design, knitting, ..."></textarea>
+        </br>
+		<button style="margin-left: 4px" class="up-btn" type="button">Vote Up!</button>
+		<button style="margin-left: 4px" class="down-btn" type="button">Vote Down :(</button>
+		</form>
       </div>
-      <div class="og-idear-tip-container">
-        <div class="og-idear-tip"></div>
+      <div class="og-idea-tip-container">
+        <div class="og-idea-tip"></div>
       </div>
-      <div class="og-idear-toolbar">
+      <div class="og-idea-toolbar">
+        <div class="og-popup-btn og-popup-close">×</div>
       </div>
     </div>`;
 
-class Idear {
+class ShowIdea {
     constructor(options) {
 
-        this._id = Idear._staticCounter++;
+        this._id = ShowIdea._staticCounter++;
 
         this.events = new Events(["open", "close"]);
 
@@ -34,9 +44,10 @@ class Idear {
         this._content = options.content || null;
 
         this._contentEl = null;
+        this._titleEl = null;
+        this._tagsEl = null;
+        this._skillsEl = null;
 
-		this._function = null;
-		this._ll = [0, 0];
 
         this._planet = options.planet;
 
@@ -72,7 +83,7 @@ class Idear {
 
     setScreen(p) {
         if (this._planet) {
-            this.el.style.transform = "translate(" + (p.x - this.clientWidth * 0.5) + "px, " + (p.y - this._planet.renderer.handler.canvas.height - this.clientHeight * 0.5) + "px)"
+            this.el.style.transform = "translate(" + (p.x - this.clientWidth * 0.5) + "px, " + (p.y - this._planet.renderer.handler.canvas.height - this.clientHeight * 0.5) + "px)";
         }
     }
 
@@ -96,26 +107,33 @@ class Idear {
 
     render(params) {
         this.el = this._renderTemplate(params);
-        this._contentEl = this.el.querySelector(".og-idear-content");
+        this._titleEl = this.el.querySelector(".og-popup-title");
+        this._contentEl = this.el.querySelector(".og-idea-content");
+        //TODO: set this._titleEl.innerHTML = Titel von serverabfrage 
+        //TODO: set this._contentEl.innerHTML = description von serverabfrage 
         this.setOffset(this._offset[0], this._offset[1]);
         this.setContent(this._content);
         this.setLonLat(this._lonLat);
         this.setVisibility(this._visibility);
-        this.el.querySelector(".close-btn").addEventListener("click", (e) => {
+        this.el.querySelector(".og-popup-close").addEventListener("click", (e) => {
             this.hide();
         });
-        this.el.querySelector(".save-btn").addEventListener("click", (e) => {
-			this._function(this._ll);
+        this.el.querySelector(".down-btn").addEventListener("click", (e) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "submitVote", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("IdeaID="+this.properties.name+"&upvote=0");  
+            this.hide();
+        });
+        this.el.querySelector(".up-btn").addEventListener("click", (e) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "submitVote", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("IdeaID="+this.properties.name+"&upvote=1");  
             this.hide();
         });
         return this;
     }
-
-	setFunction(functio, ll){
-		this._function = functio;
-		this._ll = ll;
-		return this;
-	}
 
     setVisibility(visibility) {
         if (visibility) {
@@ -131,7 +149,7 @@ class Idear {
     }
 
     getToolbarContainer() {
-        return this.el.querySelector(".og-idear-toolbar");
+        return this.el.querySelector(".og-idea-toolbar");
     }
 
     show() {
@@ -191,7 +209,7 @@ class Idear {
             if (typeof content === 'string') {
                 this._contentEl.innerHTML = content;
             } else {
-                this._contentEl.appendChild(content)
+                this._contentEl.appendChild(content);
             }
         }
         return this;
@@ -205,4 +223,4 @@ class Idear {
 
 }
 
-export { Idear };
+export { ShowIdea };

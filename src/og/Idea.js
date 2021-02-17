@@ -81,7 +81,7 @@ class Idea {
 
     setScreen(p) {
         if (this._planet) {
-            this.el.style.transform = "translate(" + (p.x - this.clientWidth * 0.5) + "px, " + (p.y - this._planet.renderer.handler.canvas.height - this.clientHeight * 0.5) + "px)"
+            this.el.style.transform = "translate(" + (p.x - this.clientWidth * 0.5) + "px, " + (p.y - this._planet.renderer.handler.canvas.height - this.clientHeight * 0.5) + "px)";
         }
     }
 
@@ -114,20 +114,27 @@ class Idea {
             this.hide();
         });
         this.el.querySelector(".save-btn").addEventListener("click", (e) => {
-			this._function(this._ll);
             var xhttp = new XMLHttpRequest();
+            var self = this;
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var obj = JSON.parse(this.responseText);
+                    console.log(obj);
+			              self._function(self._ll.lon,self._ll.lat,obj);//add ID!
+                    self.hide();
+                }};
             var nameText = document.getElementById('nameText').value;
             var ideaText = document.getElementById('ideaText').value;
             xhttp.open("POST", "submitIdea", true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+this._ll.lon+"&lat="+this._ll.lat);  
-            this.hide();
+            //xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+this._ll.lon+"&lat="+this._ll.lat);
             //alert("nameText="+nameText+"&ideaText="+ideaText);
         });
         return this;
     }
 
 	setFunction(functio, ll){
+      //console.log("set this._ll to: " + ll);
 		this._function = functio;
 		this._ll = ll;
 		return this;

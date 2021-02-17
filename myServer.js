@@ -98,13 +98,6 @@ http.createServer(function (req, res) {
       req.on('end', function () {
         var formData = qs.parse(requestBody);
         console.log(`formData ${formData.ideaText}`);
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.write('<!doctype html><html><head><title>response</title></head><body>');
-        res.write('Thanks for your Idea<br />' + formData.nameText);
-        res.write('<br />Description: ' + formData.ideaText);
-        res.write('<br />Categories: ' + formData.categoriesText);
-        res.write('<br />Skills: ' + formData.skillsText);
-        res.end('</body></html>');
 
         let db = new sqlite3.Database('./db/Ideas.db', (err) => {
           if (err) {
@@ -123,6 +116,7 @@ http.createServer(function (req, res) {
               return console.log(err.message);
             }
             // get the last insert id
+            lastID = this.lastID;
             console.log(`A row has been inserted into Idea with rowid ${this.lastID}`);
             db.run('INSERT INTO Places(lon,lat,IdeaID) VALUES(?1,?2,?3)', {
               1: formData.lon,
@@ -135,6 +129,8 @@ http.createServer(function (req, res) {
               // get the last insert id
               console.log(`A row has been inserted with rowid ${this.lastID}`);
             });
+              res.writeHead(200, {'Content-Type': 'application/json'});
+              res.end(JSON.stringify(lastID));
             db.close();
           });
         })
