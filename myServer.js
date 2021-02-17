@@ -193,9 +193,13 @@ http.createServer(function (req, res) {
           }
         });
         db.serialize(function () {
-            db.run('INSERT INTO Votes(IdeaID,upvote) VALUES(?1,?2)', {
+            // new Date object
+            let date_ob = new Date();
+            //console.log(date_ob.getFullYear() + "-" + ("0" + (date_ob.getMonth() + 1)).slice(-2) + "-" + ("0" + date_ob.getDate()).slice(-2) + " " + ("0" + date_ob.getHours()).slice(-2) + ":" +("0" + date_ob.getMinutes()).slice(-2) + ":" + ("0" + date_ob.getSeconds()).slice(-2));
+            db.run('INSERT INTO Votes(IdeaID,upvote,DateTime) VALUES(?1,?2,?3)', {
                 1: formData.IdeaID,
-                2: formData.upvote
+                2: formData.upvote,
+                3: date_ob.getFullYear() + "-" + ("0" + (date_ob.getMonth() + 1)).slice(-2) + "-" + ("0" + date_ob.getDate()).slice(-2) + " " + ("0" + date_ob.getHours()).slice(-2) + ":" +("0" + date_ob.getMinutes()).slice(-2) + ":" + ("0" + date_ob.getSeconds()).slice(-2)
             }, function (err) {
                 if (err) {
                     return console.log(err.message);
