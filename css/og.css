@@ -375,12 +375,17 @@
     padding: 1px;
     text-align: left;
     border-radius: 8px;
-    min-width: 30px;
-    min-height: 17px;
+    width: 450px;
+    height: 500px;
 }
 
 .og-idea-content {
     margin: 10px 5px 5px;
+    line-height: 1.4;
+}
+
+.og-idea-showcontent {
+    margin: 50px 5px 5px;
     line-height: 1.4;
 }
 

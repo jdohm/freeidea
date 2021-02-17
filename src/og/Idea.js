@@ -26,6 +26,7 @@ const TEMPLATE =
         <div class="og-idea-tip"></div>
       </div>
       <div class="og-idea-toolbar">
+        <div class="og-popup-btn og-popup-close">×</div>
       </div>
     </div>`;
 
@@ -113,6 +114,9 @@ class Idea {
         this.el.querySelector(".close-btn").addEventListener("click", (e) => {
             this.hide();
         });
+        this.el.querySelector(".og-popup-close").addEventListener("click", (e) => {
+            this.hide();
+        });
         this.el.querySelector(".save-btn").addEventListener("click", (e) => {
             var xhttp = new XMLHttpRequest();
             var self = this;
@@ -126,7 +130,7 @@ class Idea {
             var nameText = document.getElementById('nameText').value;
             var ideaText = document.getElementById('ideaText').value;
             xhttp.open("POST", "submitIdea", true);
-            //xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+this._ll.lon+"&lat="+this._ll.lat);
             //alert("nameText="+nameText+"&ideaText="+ideaText);
         });
@@ -214,7 +218,7 @@ class Idea {
             if (typeof content === 'string') {
                 this._contentEl.innerHTML = content;
             } else {
-                this._contentEl.appendChild(content)
+                this._contentEl.appendChild(content);
             }
         }
         return this;

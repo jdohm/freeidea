@@ -189,7 +189,7 @@ class Popup {
             if (typeof content === 'string') {
                 this._contentEl.innerHTML = content;
             } else {
-                this._contentEl.appendChild(content)
+                this._contentEl.appendChild(content);
             }
         }
         return this;

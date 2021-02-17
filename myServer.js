@@ -133,9 +133,80 @@ http.createServer(function (req, res) {
               res.end(JSON.stringify(lastID));
             db.close();
           });
-        })
+        });
       });
-    } else {
+    }
+      else if (req.url == `/getIdea`) {
+      var requestBody = '';
+      //prevent big fileupload
+      req.on('data', function (data) {
+        requestBody += data;
+        if (requestBody.length > 1e7) {
+          res.writeHead(413, 'Request Entity Too Large', { 'Content-Type': 'text/html' });
+          res.end('<!doctype html><html><head><title>413</title></head><body>413: Request Entity Too Large</body></html>');
+        }
+      });
+      req.on('end', function () {
+        var formData = qs.parse(requestBody);
+        console.log(`formData ${formData.IdeaID}`);
+
+        let db = new sqlite3.Database('./db/Ideas.db', (err) => {
+          if (err) {
+            return console.error(err.message);
+          }
+          //console.log('Connected to the SQlite database.');
+        });
+        //Write to Database (use in POST answer to save data)
+        db.serialize(function () {
+            let sql = `SELECT ID AskForIdea, title TITLE, description DESCRIPTION FROM Idea WHERE ID is ?`;
+            db.get(sql, [formData.IdeaID], (err, rows) => {
+                if (err) {
+                    throw err;
+                }
+                res.writeHead(200, {'Content-Type': 'application/json'});
+                res.end(JSON.stringify(rows));
+            });
+            db.close();
+        });
+      });
+      }
+      else if (req.url == `/submitVote`) {
+      var requestBody = '';
+      //prevent big fileupload
+      req.on('data', function (data) {
+        requestBody += data;
+        if (requestBody.length > 1e7) {
+          res.writeHead(413, 'Request Entity Too Large', { 'Content-Type': 'text/html' });
+          res.end('<!doctype html><html><head><title>413</title></head><body>413: Request Entity Too Large</body></html>');
+        }
+      });
+      req.on('end', function () {
+        var formData = qs.parse(requestBody);
+          var formDataUp;
+          if(formData.upvote == 1) formDataUp = "Up";
+          else formDataUp = "Down";
+          console.log(`formData ${formData.IdeaID} vote` + formDataUp);
+
+        let db = new sqlite3.Database('./db/Ideas.db', (err) => {
+          if (err) {
+            return console.error(err.message);
+          }
+        });
+        db.serialize(function () {
+            db.run('INSERT INTO Votes(IdeaID,upvote) VALUES(?1,?2)', {
+                1: formData.IdeaID,
+                2: formData.upvote
+            }, function (err) {
+                if (err) {
+                    return console.log(err.message);
+                }
+            });
+            db.close();
+        });
+      });
+          res.end();
+      }
+      else {
       res.writeHead(404, 'Resource Not Found', { 'Content-Type': 'text/html' });
       res.end('<!doctype html><html><head><title>404</title></head><body>404: Resource Not Found</body></html>');
     }

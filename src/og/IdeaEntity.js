@@ -20,9 +20,6 @@ class IdeaEntity extends Entity {
         });
         let groundPos = gplanet.getCartesianFromMouseTerrain();
         myIdea.setCartesian3v(groundPos);
-
-	      myIdea.setContent(``);
-        console.log("got here");
         myIdea.setVisibility(true);
     }
 }

@@ -7,20 +7,12 @@ import { getHTML, parseHTML, createLonLat } from './utils/shared.js';
 const TEMPLATE =
     `<div class="og-idea {className}">
       <div class="og-idea-content-wrapper">
-        <div class="og-idea-content"></div>
-        <form method="POST" action="submitShowIdea" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded"  target="_blank">
-        <div id="og-popup-title"><\div>
-		<textarea id="nameText" style="overflow:auto;resize:none" rows="1" cols="60" name="nameText" placeholder="Using Peanuts to end world hunger"></textarea>
-        <H3>Please describe your ShowIdea:<\H3>
-		<textarea id="ideaText" style="overflow:auto;resize:none" rows="5" cols="60" name="ideaText" placeholder="Enter text"></textarea>
-	    <p>Add topics</p>
-		<textarea id="categoriesText" style="overflow:auto;resize:none" rows="1" cols="60" name="categoriesText" placeholder="social, environment, it, ..."></textarea>
-	    <p>Needed skills</p>
-		<textarea id="skillsText" style="overflow:auto;resize:none" rows="1" cols="60" name="skillsText" placeholder="programming, management, UI-Design, knitting, ..."></textarea>
-        </br>
-		<button style="margin-left: 4px" class="up-btn" type="button">Vote Up!</button>
-		<button style="margin-left: 4px" class="down-btn" type="button">Vote Down :(</button>
-		</form>
+      <div class="og-popup-title"> </div>
+      <div class="og-idea-showcontent"></div>
+		<!-- button style="margin-left: 4px" class="up-btn" type="button">Vote Up!</button -->
+		<!-- button style="margin-left: 4px" class="down-btn" type="button">Vote Down :(</button -->
+    <img src="./media/up.svg" alt="Vote Up!" class="up-btn" style="width:200px;margin-left: 20px;margin-top: 6px;vertical-align: bottom;"> 
+    <img src="./media/down.svg" class="down-btn" alt="Vote Down" style="width:200px;"> 
       </div>
       <div class="og-idea-tip-container">
         <div class="og-idea-tip"></div>
@@ -33,7 +25,7 @@ const TEMPLATE =
 class ShowIdea {
     constructor(options) {
 
-        this._id = ShowIdea._staticCounter++;
+        this._id = options._id;//ShowIdea._staticCounter++;
 
         this.events = new Events(["open", "close"]);
 
@@ -41,11 +33,16 @@ class ShowIdea {
 
         this.el = null;
 
+        this._title = options.title || "";
+
         this._content = options.content || null;
 
         this._contentEl = null;
+
         this._titleEl = null;
+
         this._tagsEl = null;
+
         this._skillsEl = null;
 
 
@@ -107,31 +104,63 @@ class ShowIdea {
 
     render(params) {
         this.el = this._renderTemplate(params);
+        this._contentEl = this.el.querySelector(".og-idea-showcontent");
         this._titleEl = this.el.querySelector(".og-popup-title");
-        this._contentEl = this.el.querySelector(".og-idea-content");
-        //TODO: set this._titleEl.innerHTML = Titel von serverabfrage 
+
+
+
+
+
         //TODO: set this._contentEl.innerHTML = description von serverabfrage 
         this.setOffset(this._offset[0], this._offset[1]);
         this.setContent(this._content);
+        this.setTitle(this._title);
         this.setLonLat(this._lonLat);
         this.setVisibility(this._visibility);
         this.el.querySelector(".og-popup-close").addEventListener("click", (e) => {
             this.hide();
         });
+        var nameID = this._id;
         this.el.querySelector(".down-btn").addEventListener("click", (e) => {
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", "submitVote", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send("IdeaID="+this.properties.name+"&upvote=0");  
+            xhttp.send("IdeaID="+nameID+"&upvote=0");  
             this.hide();
         });
         this.el.querySelector(".up-btn").addEventListener("click", (e) => {
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", "submitVote", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send("IdeaID="+this.properties.name+"&upvote=1");  
+            xhttp.send("IdeaID="+nameID+"&upvote=1");  
             this.hide();
         });
+
+
+        /*-------------
+          get Infos for Idea from server
+        */
+
+        var xhttp = new XMLHttpRequest();
+        var self = this;
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var obj = JSON.parse(this.responseText);
+
+                console.log('Asked ID: ' + obj.AskForIdea);
+                console.log('Titel: ' + obj.TITLE);
+                console.log('Description: ' + obj.DESCRIPTION);
+                self.setTitle("<H2>" + obj.TITLE + "</H2>");
+                self.setContent("<p>" + obj.DESCRIPTION + "</p>");
+            }
+        };
+        xhttp.open("POST", "getIdea", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("IdeaID="+this._id);
+
+        /*-------------
+          get Infos for Idea from server
+        */
         return this;
     }
 
@@ -194,6 +223,12 @@ class ShowIdea {
         return this;
     }
 
+    setTitle(html) {
+        this._title = html;
+        this._titleEl.innerHTML = html;
+        return this;
+    }
+
     setLonLat(lonLat) {
         this._lonLat = lonLat;
         if (this._planet) {
@@ -220,6 +255,23 @@ class ShowIdea {
         this._contentEl.innerHTML = "";
     }
 
+    //setTitle(content) {
+        //if (content) {
+            //this.clearTitle();
+            //this._title = content;
+            //if (typeof content === 'string') {
+                //this._titleEl.innerHTML = content;
+            //} else {
+                //this._titleEl.appendChild(content);
+            //}
+        //}
+        //return this;
+    //}
+
+    //clearTitle() {
+        //this._title = null;
+        //this._titleEl.innerHTML = "";
+    //}
 
 }
 

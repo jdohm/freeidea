@@ -141,12 +141,13 @@
             }));
 	}
 
-        globe.planet.viewExtentArr([8.08, 46.72, 8.31, 46.75]);
+     //Zoom in (deativate for testing, to prevent long loading times)
+        //globe.planet.viewExtentArr([8.08, 46.72, 8.31, 46.75]);
 
         globe.planet.renderer.events.on("lclick", function (e) {
             if (pickingObject) {
                 //alert("name: " + e.pickingObject.properties.name);
-                e.pickingObject.showIdea(globe.planet);
+                e.pickingObject.showIdea(globe.planet, e.pickingObject.properties.name);
             //myIdea.setVisibility(true);
 	    }
 	    else {//New Idea
