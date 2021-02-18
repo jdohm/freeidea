@@ -22,14 +22,14 @@ http.createServer(function (req, res) {
       });
       //read all places from Database 
       db.serialize(function() {
-      let sql = `SELECT lon LON , lat LAT, IdeaID IDEAID FROM Places ORDER BY lat`;
+          let sql = `SELECT lon, lat, IdeaID, upvotes, downvotes FROM v_PlacesVotes ORDER BY lat`;
 
       db.all(sql, [], (err, rows) => {
         if (err) {
             throw err;
         }
         rows.forEach((row) => {
-            console.log("lon: " + row.LON + " lat: " + row.LAT + " IdeaID: " + row.IDEAID);
+            console.log("lon: " + row.lon + " lat: " + row.lat + " IdeaID: " + row.IdeaID + " upvotes: " + row.upvotes + " downvotes: " + row.downvotes);
         });
           res.writeHead(200, {'Content-Type': 'application/json'});
           res.end(JSON.stringify(rows));

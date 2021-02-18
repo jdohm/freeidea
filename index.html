@@ -29,15 +29,15 @@
             if (this.readyState == 4 && this.status == 200) {
                 var obj = JSON.parse(this.responseText);
                 //Object.keys(this.responseText).forEach(key => {
-                    //console.log(key, obj[key].LON);
+                    //console.log(key, obj[key].lon);
                 //});
 
                 for (var key in obj) {
                     // skip loop if the property is from prototype
                     if (!obj.hasOwnProperty(key)) continue;
 
-                    console.log('lon: ' + obj[key].LON + ' lat: ' + obj[key].LAT + ' IdeaID: ' + obj[key].IDEAID);
-                    myCreateIdea(obj[key].LON, obj[key].LAT, obj[key].IDEAID);
+                    console.log('lon: ' + obj[key].lon + ' lat: ' + obj[key].lat + ' IdeaID: ' + obj[key].IdeaID);
+                    myCreateIdea(obj[key].lon, obj[key].lat, obj[key].IdeaID, obj[key].upvotes-obj[key].downvotes);
                     }
             }
         };
@@ -46,16 +46,33 @@
         xhttp.open("GET", "getIdeas", true);
         xhttp.send();
 
-	   function myCreateIdea(lon, lat, id){
+	   function myCreateIdea(lon, lat, id, votes){
+         console.log("got " + votes + " votes");
+         if(votes >= 0){
          pointLayer.add(new IdeaEntity({
              'name': id,
              'lonlat': [lon, lat],
              'billboard': {
                  'src': './media/pos.png',
-                 'size': [12, 48],
-                 'offset': [0, 24]
+                 'size': [12, votes+50],
+                 'offset': [0, Math.round((votes+50)/2)]
              }
          }));
+         }
+         else if(votes > -48) {
+             pointLayer.add(new IdeaEntity({
+                 'name': id,
+                 'lonlat': [lon, lat],
+                 'billboard': {
+                     'src': './media/neg.png',
+                     'size': [12, votes+50],
+                     'offset': [0, Math.round((votes+50)/2)]
+                 }
+             }));
+         }
+         else {
+             //ignore vote, don't display
+         }
 	   }
 
         let pointLayer = new Vector("points", {
