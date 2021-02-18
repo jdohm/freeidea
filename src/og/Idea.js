@@ -124,7 +124,7 @@ class Idea {
                 if (this.readyState == 4 && this.status == 200) {
                     var obj = JSON.parse(this.responseText);
                     console.log(obj);
-			              self._function(self._ll.lon,self._ll.lat,obj);//add ID!
+			              self._function(self._ll.lon,self._ll.lat,obj,0);//add ID!
                     self.hide();
                 }};
             var nameText = document.getElementById('nameText').value;
