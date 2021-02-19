@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="./css/og.css" type="text/css" />
     <meta name="author" content="Jannis Dohm"><!-- based on openglobus.org -->
     <meta charset="UTF-8">
-   <link rel="icon" type="image/svg+xml" href="./media/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="./media/favicon.svg">
 </head>
 
 <body>
@@ -163,14 +163,14 @@
 
         globe.planet.renderer.events.on("lclick", function (e) {
             let groundPos = globe.planet.getCartesianFromMouseTerrain();
+            var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
             if (pickingObject) {
                 //alert("name: " + e.pickingObject.properties.name);
                 e.pickingObject.showIdea(globe.planet, e.pickingObject.properties.name);
             //myIdea.setVisibility(true);
 	    }
-	          else if(groundPos != null){//New Idea
+	          else if(groundPos !== null && ll !== null){//New Idea
 	//idea start
-            var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
 
             myIdea.setCartesian3v(groundPos);
 
@@ -181,6 +181,27 @@
 	    }
 
         });
+     var notTouch = true;
+     globe.planet.renderer.events.on("touchmove", function (e) {
+         notTouch = false;
+     });
+     globe.planet.renderer.events.on("touchend", function (e) {
+         if(notTouch){
+         let groundPos = globe.planet.getCartesianFromMouseTerrain();
+         var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
+         var name;
+         try{name = e.pickingObject.properties.name;}
+         catch(err){console.log("name not found")};
+         if (name) {
+             window.open("mobileShowIdea?IdeaID=" + name, "_top");
+	       }
+	       else if(groundPos !== null && ll !== null){//New Idea
+             //create new Idea in new window
+             window.open("mobileIdea?lon=" + ll.lon + "&lat=" + ll.lat, "_top");
+	       }
+         }
+         notTouch = true;
+     });
 
         pointLayer.events.on("rclick", function(e){
             e.pickingObject.remove();

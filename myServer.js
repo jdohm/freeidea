@@ -37,6 +37,107 @@ http.createServer(function (req, res) {
       db.close();
       });
     }
+      else if (parsedUrl.pathname == "/mobileIdea"){
+          var qqdata = url.parse(req.url,true).query;
+          console.log(qqdata.lon);
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.end(TEMPLATEFS);
+    }
+      else if (parsedUrl.pathname == "/mobileShowIdea"){
+          var formData = url.parse(req.url,true).query;
+          console.log(formData.IdeaID);
+
+          let db = new sqlite3.Database('./db/Ideas.db', (err) => {
+              if (err) {
+                  return console.error(err.message);
+              }
+              //console.log('Connected to the SQlite database.');
+          });
+          db.serialize(function () {
+              let sql = `SELECT ID IdeaID, title, description FROM Idea WHERE ID is ?`;
+              db.get(sql, [formData.IdeaID], (err, rows) => {
+                  if (err) {
+                      throw err;
+                  }
+                  console.log(rows.IdeaID + rows.title);
+                  let page = `
+<html>
+
+    <head>
+        <title>FreeIdea - Idea View</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./css/og.css" type="text/css" />
+        <meta name="author" content="Jannis Dohm"><!-- based on openglobus.org -->
+        <meta charset="UTF-8">
+        <link rel="icon" type="image/svg+xml" href="./media/favicon.svg">
+    </head>
+
+<body>
+
+<div style="display: flex; align-content: space-between; flex-wrap: wrap; width: 100%; height: 100%;">
+    <div>
+    <H2 id="id_title"><H2>
+    <p id="id_IdeaID"></p>
+    </br>
+    <p id="id_description"></p>
+    </br>
+    </br>
+
+    </div>
+    <div>
+    <H3>Vote this idea</H3></br>
+        <img src="./media/up.svg" alt="Vote Up!" id="up-btn" style="width:49%;margin-top: 6px;vertical-align: bottom;">
+        <img src="./media/down.svg" id="down-btn" alt="Vote Down" style="width:49%;">
+        <button onclick="history.go(-1);" style="width: 100%" id="close-btn" class="close-btn" type="button">Back</button>
+    </div>
+</div>
+</body>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+document.getElementById("id_title").innerHTML = "${rows.title}";
+document.getElementById("id_IdeaID").innerHTML = "IdeaID: #" + urlParams.get("IdeaID");
+document.getElementById("id_description").innerHTML = "${rows.description}";
+
+document.getElementById("up-btn").addEventListener("click", (e) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "submitVote", true);
+            xhttp.onreadystatechange = function() {
+                history.back()
+            }
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("IdeaID="+urlParams.get("IdeaID")+"&upvote=1");
+        });
+
+document.getElementById("down-btn").addEventListener("click", (e) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "submitVote", true);
+            xhttp.onreadystatechange = function() {
+                history.back()
+            }
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("IdeaID="+urlParams.get("IdeaID")+"&upvote=0");
+        });
+
+function getJsonFromUrl(url) {
+  if(!url) url = location.search;
+  var query = url.substr(1);
+  var result = {};
+  query.split("&").forEach(function(part) {
+    var item = part.split("=");
+    result[item[0]] = decodeURIComponent(item[1]);
+  });
+  return result;
+}
+</script>
+</html>
+`;
+
+                  res.writeHead(200, { 'Content-Type': 'text/html' });
+                  res.end(page);
+              });
+              db.close();
+          });
+      }
     else {
       if (parsedUrl.pathname == `/`) parsedUrl.pathname = `/index.html`;
       console.log(`parsedUrl: ${parsedUrl.pathname}`);
@@ -220,3 +321,64 @@ http.createServer(function (req, res) {
   }
 }).listen(parseInt(port));
 console.log(`Server listening on port ${port}`);
+
+
+const TEMPLATEFS =
+    `
+<html>
+
+    <head>
+        <title>FreeIdea - Create Idea</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./css/og.css" type="text/css" />
+        <meta name="author" content="Jannis Dohm"><!-- based on openglobus.org -->
+        <meta charset="UTF-8">
+        <link rel="icon" type="image/svg+xml" href="./media/favicon.svg">
+    </head>
+
+<body>
+
+
+<H2>Create your new Idea<H2>
+    <form method="POST" action="submitIdea" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded"  target="_blank">
+    <H3>Please name your Idea:<\H3>
+		<textarea id="nameText"  rows="1" name="nameText" placeholder="Using Peanuts to end world hunger"></textarea>
+    <H3>Please describe your Idea:<\H3>
+		<textarea id="ideaText"  rows="5" name="ideaText" placeholder="Enter text"></textarea>
+    <p>Add topics</p>
+		<textarea id="categoriesText"  rows="1" name="categoriesText" placeholder="social, environment, it, ..."></textarea>
+    <p>Needed skills</p>
+		<textarea id="skillsText"  rows="1" name="skillsText" placeholder="programming, management, UI-Design, knitting, ..."></textarea>
+    </br>
+    <p id="demo3"></p>
+		<button style="margin-left: 4px" id="save-btn" class="save-btn" type="button">Save</button>
+		<button onclick="history.go(-1);" style="margin-left: 4px" id="close-btn" class="close-btn" type="button">Cancel</button>
+		</form>
+</body>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+document.getElementById("save-btn").addEventListener("click", (e) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                history.back()
+            }
+            var nameText = document.getElementById('nameText').value;
+            var ideaText = document.getElementById('ideaText').value;
+            xhttp.open("POST", "submitIdea", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+urlParams.get("lon") +"&lat="+ urlParams.get("lat"));
+        });
+
+function getJsonFromUrl(url) {
+  if(!url) url = location.search;
+  var query = url.substr(1);
+  var result = {};
+  query.split("&").forEach(function(part) {
+    var item = part.split("=");
+    result[item[0]] = decodeURIComponent(item[1]);
+  });
+  return result;
+}
+</script>
+</html>
+`;

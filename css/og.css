@@ -479,3 +479,7 @@
     background-color: rgba(64, 59, 59, 0.85);
     border-radius: 2px;
 }
+
+textarea {
+    width: 100%;
+    overflow:auto;
