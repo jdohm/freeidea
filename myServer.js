@@ -60,6 +60,10 @@ http.createServer(function (req, res) {
                       throw err;
                   }
                   console.log(rows.IdeaID + rows.title);
+                  var _title = JSON.stringify(rows.title).slice(1, -1);
+                  console.log(_title);
+                  var _description = JSON.stringify(rows.description).slice(1, -1);
+                  console.log(_description);
                   let page = `
 <html>
 
@@ -94,9 +98,9 @@ http.createServer(function (req, res) {
 </body>
 <script>
 const urlParams = new URLSearchParams(window.location.search);
-document.getElementById("id_title").innerHTML = "${rows.title}";
+document.getElementById("id_title").innerHTML = "${_title}";
 document.getElementById("id_IdeaID").innerHTML = "IdeaID: #" + urlParams.get("IdeaID");
-document.getElementById("id_description").innerHTML = "${rows.description}";
+document.getElementById("id_description").textContent = "${_description}";
 
 document.getElementById("up-btn").addEventListener("click", (e) => {
             var xhttp = new XMLHttpRequest();
