@@ -363,12 +363,12 @@ const TEMPLATEFS =
 const urlParams = new URLSearchParams(window.location.search);
 document.getElementById("save-btn").addEventListener("click", (e) => {
             var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                history.back()
-            }
             var nameText = document.getElementById('nameText').value;
             var ideaText = document.getElementById('ideaText').value;
             xhttp.open("POST", "submitIdea", true);
+            xhttp.onreadystatechange = function() {
+                history.back()
+            }
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+urlParams.get("lon") +"&lat="+ urlParams.get("lat"));
         });
