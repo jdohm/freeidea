@@ -1,4 +1,4 @@
-const http = require('http');
+const http = require('https');
 const url = require('url');
 const fs = require('fs');
 const path = require('path');
@@ -7,7 +7,13 @@ const sqlite3 = require('sqlite3').verbose();
 const port = process.argv[2] || 8081;
 var qs = require('querystring');
 
-http.createServer(function (req, res) {
+var options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/example.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/example.com/cert.pem'),
+    ca: fs.readFileSync('/etc/letsencrypt/live/example.com/chain.pem')
+};
+
+http.createServer(options, function (req, res) {
   if (req.method === "GET") {
     console.log(`${req.method} ${req.url}`);
     // parse URL

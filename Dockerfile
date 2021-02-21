@@ -16,8 +16,7 @@ WORKDIR /freeidea
 ADD . /freeidea
 
 RUN npm ci \
-	&& npm audit fix \
-	&& npm run build 
+	&& npm audit fix 
 
 EXPOSE 8081
 
