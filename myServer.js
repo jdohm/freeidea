@@ -1,19 +1,26 @@
-const http = require('https');
+const http = require('http');
+const https = require('https');
 const url = require('url');
 const fs = require('fs');
 const path = require('path');
 //const mysql = require('mysql');
 const sqlite3 = require('sqlite3').verbose();
-const port = process.argv[2] || 8081;
+const port = process.argv[2] || 80;
+const portSSL = process.argv[3] || 443;
 var qs = require('querystring');
+
+http.createServer(function (req, res){
+          res.end('<!doctype html><html><head><title>413</title></head><body>301: redirect to https</body><script> console.log("you are accessing us via " +  "an insecure protocol (HTTP). " + "Redirecting you to HTTPS."); window.location.href =  window.location.href.replace("http:", "https:"); </script></html>');
+}).listen(parseInt(port));
+console.log(`http Server listening on port ${port}`);
 
 var options = {
     key: fs.readFileSync('/etc/letsencrypt/live/freeidea.de/privkey.pem'),
     cert: fs.readFileSync('/etc/letsencrypt/live/freeidea.de/cert.pem'),
     ca: fs.readFileSync('/etc/letsencrypt/live/freeidea.de/chain.pem')
-};
+}
 
-http.createServer(options, function (req, res) {
+https.createServer(options, function (req, res) {
   if (req.method === "GET") {
     console.log(`${req.method} ${req.url}`);
     // parse URL
@@ -329,8 +336,8 @@ function getJsonFromUrl(url) {
     res.writeHead(405, 'Method Not Supported', { 'Content-Type': 'text/html' });
     return res.end('<!doctype html><html><head><title>405</title></head><body>405: Method Not Supported</body></html>');
   }
-}).listen(parseInt(port));
-console.log(`Server listening on port ${port}`);
+}).listen(parseInt(portSSL));
+console.log(`Server listening on port ${portSSL}`);
 
 
 const TEMPLATEFS =
