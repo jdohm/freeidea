@@ -8,9 +8,9 @@ const port = process.argv[2] || 8081;
 var qs = require('querystring');
 
 var options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/example.com/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/example.com/cert.pem'),
-    ca: fs.readFileSync('/etc/letsencrypt/live/example.com/chain.pem')
+    key: fs.readFileSync('/etc/letsencrypt/live/freeidea.de/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/freeidea.de/cert.pem'),
+    ca: fs.readFileSync('/etc/letsencrypt/live/freeidea.de/chain.pem')
 };
 
 http.createServer(options, function (req, res) {
