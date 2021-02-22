@@ -38,15 +38,26 @@
                     if (!obj.hasOwnProperty(key)) continue;
 
                     console.log('lon: ' + obj[key].lon + ' lat: ' + obj[key].lat + ' IdeaID: ' + obj[key].IdeaID);
-                    myCreateIdea(obj[key].lon, obj[key].lat, obj[key].IdeaID, obj[key].upvotes-obj[key].downvotes);
+
+                    var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == obj[key].IdeaID);
+                    //if IdeaBeam with ID is missing create new IdeaBeam
+                    if(obj2  == undefined) {
+                        myCreateIdea(obj[key].lon, obj[key].lat, obj[key].IdeaID, obj[key].upvotes-obj[key].downvotes);
+                        console.log("created Idea " + pointLayer._entities[key].properties.name);
+                    } //else if necessary update size of existing idea beam
+                    else if(obj2.billboard._height !== (obj[key].upvotes-obj[key].downvotes+50)) {
+                        console.log("wrong size");
+                        obj2.billboard._height = (obj[key].upvotes-obj[key].downvotes+50);
+                        obj2.billboard.setHeight(obj[key].upvotes-obj[key].downvotes+50);
                     }
+                }
             }
         };
         //xhttp.setRequestHeader("Accept", "application/json");
         //xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.open("GET", "getIdeas", true);
         xhttp.send();
-     }
+     });
 
 	   function myCreateIdea(lon, lat, id, votes){
          console.log("got " + votes + " votes");
@@ -75,7 +86,7 @@
          else {
              //ignore vote, don't display
          }
-	   }
+	   };
 
         let pointLayer = new Vector("points", {
             'clampToGround': true,
