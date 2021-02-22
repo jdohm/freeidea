@@ -1,3 +1,4 @@
+# NOT MAINTAINED! only stays here for potential later readaption
 FROM ubuntu
 MAINTAINER Jannis jannismax@gmail.com
 
