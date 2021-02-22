@@ -20,6 +20,15 @@ var options = {
     ca: fs.readFileSync('/etc/letsencrypt/live/freeidea.de/chain.pem')
 }
 
+
+// Start sqlite3 database connection
+let db = new sqlite3.Database('./db/Ideas.db', (err) => {
+    if (err) {
+        return console.error(err.message);
+    }
+    console.log('Connected to the SQlite database.');
+});
+
 https.createServer(options, function (req, res) {
   if (req.method === "GET") {
     console.log(`${req.method} ${req.url}`);
@@ -27,12 +36,6 @@ https.createServer(options, function (req, res) {
     const parsedUrl = url.parse(req.url);
     if (parsedUrl.pathname == `/getIdeas`) {
 
-        let db = new sqlite3.Database('./db/Ideas.db', (err) => {
-        if (err) {
-        return console.error(err.message);
-        }
-        console.log('Connected to the SQlite database.');
-      });
       //read all places from Database 
       db.serialize(function() {
           let sql = `SELECT lon, lat, IdeaID, upvotes, downvotes FROM v_PlacesVotes ORDER BY lat`;
@@ -47,7 +50,6 @@ https.createServer(options, function (req, res) {
           res.writeHead(200, {'Content-Type': 'application/json'});
           res.end(JSON.stringify(rows));
       });
-      db.close();
       });
     }
       else if (parsedUrl.pathname == "/mobileIdea"){
@@ -60,12 +62,6 @@ https.createServer(options, function (req, res) {
           var formData = url.parse(req.url,true).query;
           console.log(formData.IdeaID);
 
-          let db = new sqlite3.Database('./db/Ideas.db', (err) => {
-              if (err) {
-                  return console.error(err.message);
-              }
-              //console.log('Connected to the SQlite database.');
-          });
           db.serialize(function () {
               let sql = `SELECT ID IdeaID, title, description FROM Idea WHERE ID is ?`;
               db.get(sql, [formData.IdeaID], (err, rows) => {
@@ -152,7 +148,6 @@ function getJsonFromUrl(url) {
                   res.writeHead(200, { 'Content-Type': 'text/html' });
                   res.end(page);
               });
-              db.close();
           });
       }
     else {
@@ -217,12 +212,6 @@ function getJsonFromUrl(url) {
         var formData = qs.parse(requestBody);
         console.log(`formData ${formData.ideaText}`);
 
-        let db = new sqlite3.Database('./db/Ideas.db', (err) => {
-          if (err) {
-            return console.error(err.message);
-          }
-          console.log('Connected to the SQlite database.');
-        });
         //Write to Database (use in POST answer to save data)
         db.serialize(function () {
           var lastID;
@@ -249,7 +238,6 @@ function getJsonFromUrl(url) {
             });
               res.writeHead(200, {'Content-Type': 'application/json'});
               res.end(JSON.stringify(lastID));
-            db.close();
           });
         });
       });
@@ -268,12 +256,6 @@ function getJsonFromUrl(url) {
         var formData = qs.parse(requestBody);
         console.log(`formData ${formData.IdeaID}`);
 
-        let db = new sqlite3.Database('./db/Ideas.db', (err) => {
-          if (err) {
-            return console.error(err.message);
-          }
-          //console.log('Connected to the SQlite database.');
-        });
         //Write to Database (use in POST answer to save data)
         db.serialize(function () {
             let sql = `SELECT ID AskForIdea, title TITLE, description DESCRIPTION FROM Idea WHERE ID is ?`;
@@ -284,7 +266,6 @@ function getJsonFromUrl(url) {
                 res.writeHead(200, {'Content-Type': 'application/json'});
                 res.end(JSON.stringify(rows));
             });
-            db.close();
         });
       });
       }
@@ -305,11 +286,6 @@ function getJsonFromUrl(url) {
           else formDataUp = "Down";
           console.log(`formData ${formData.IdeaID} vote` + formDataUp);
 
-        let db = new sqlite3.Database('./db/Ideas.db', (err) => {
-          if (err) {
-            return console.error(err.message);
-          }
-        });
         db.serialize(function () {
             // new Date object
             let date_ob = new Date();
@@ -323,7 +299,6 @@ function getJsonFromUrl(url) {
                     return console.log(err.message);
                 }
             });
-            db.close();
         });
       });
           res.end();
@@ -399,3 +374,20 @@ function getJsonFromUrl(url) {
 </script>
 </html>
 `;
+
+//graceful shutdown source: https://medium.com/hackernoon/graceful-shutdown-in-nodejs-2f8f59d1c357
+process.on('SIGTERM', () => {
+    console.info('SIGTERM signal received.');
+        db.close((err) => {
+            console.log('SQLite connection closed.');
+            process.exit(0);
+        });
+});
+
+process.on('SIGINT', () => {
+    console.info('SIGINT signal received.');
+        db.close((err) => {
+            console.log('SQLite connection closed.');
+            process.exit(0);
+        });
+});
