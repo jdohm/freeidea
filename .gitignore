@@ -8,6 +8,7 @@ Debug
 
 eslint
 
+db/Ideas.db
 node_modules
 .eslintrc
 .csslintrc
