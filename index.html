@@ -67,7 +67,7 @@
              'lonlat': [lon, lat],
              'billboard': {
                  'src': './media/pos.png',
-                 'size': [12, votes+50],
+                 'size': [24, votes+50],
                  'offset': [0, Math.round((votes+50)/2)]
              }
          }));
@@ -205,7 +205,7 @@
          //if(dist >= 10) notTouch = false;
      //});
      globe.planet.renderer.events.on("touchend", function (e) {
-         if(Math.hypot(e.x - _coordX, e.y -  _coordY) <= 10){
+         if(Math.hypot(e.x - _coordX, e.y -  _coordY) <= 3){
          let groundPos = globe.planet.getCartesianFromMouseTerrain();
          var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
          var name;
