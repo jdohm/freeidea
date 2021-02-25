@@ -342,7 +342,7 @@ const TEMPLATEFS =
     <p>Needed skills</p>
 		<textarea id="skillsText"  rows="1" name="skillsText" placeholder="programming, management, UI-Design, knitting, ..."></textarea>
     </br>
-    <p id="demo3"></p>
+    <p>This project is under development, your submitted idea could get lost at any time.</p>
 		<button style="margin-left: 4px" id="save-btn" class="save-btn" type="button">Save</button>
 		<button onclick="history.go(-1);" style="margin-left: 4px" id="close-btn" class="close-btn" type="button">Cancel</button>
 		</form>

@@ -18,6 +18,7 @@ const TEMPLATE =
 	    <p>Needed skills</p>
 		<textarea id="skillsText" style="overflow:auto;resize:none" rows="1" cols="60" name="skillsText" placeholder="programming, management, UI-Design, knitting, ..."></textarea>
         </br>
+    <p>This project is under development, your idea could be deleted at any time.</p>
 		<button style="margin-left: 4px" class="save-btn" type="button">Save</button>
 		<button style="margin-left: 4px" class="close-btn" type="button">Cancel</button>
 		</form>
