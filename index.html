@@ -10,7 +10,10 @@
 </head>
 
 <body>
+    <div style="display: flex; flex-direction: column; align-content: space-between; flex-wrap: wrap; width: 100%; height: 100%;">
     <div id="earth" style="width:100%;height:100%"></div>
+    <div id="idea" style="width:0%;height:100%;display:flex;justify-content:center;align-content: space-between; flex-wrap: wrap; overflow: auto;"></div><!-- flex-direction:column; -->
+    </div>
     <script type="module">
         'use strict';
 
@@ -23,6 +26,8 @@
         import { Entity } from './src/og/entity/Entity.js';
         import { IdeaEntity } from './src/og/IdeaEntity.js';
         import { Idea } from './src/og/Idea.js';
+        import { SideIdea } from './src/og/SideIdea.js';
+        import { SideShowIdea } from './src/og/SideShowIdea.js';
 
      window.addEventListener("pageshow", (e) => {
         var xhttp = new XMLHttpRequest();
@@ -59,7 +64,7 @@
         xhttp.send();
      });
 
-	   function myCreateIdea(lon, lat, id, votes){
+	   window.myCreateIdea = function myCreateIdea(lon, lat, id, votes){
          console.log("got " + votes + " votes");
          if(votes >= 0){
          pointLayer.add(new IdeaEntity({
@@ -78,7 +83,7 @@
                  'lonlat': [lon, lat],
                  'billboard': {
                      'src': './media/neg.png',
-                     'size': [12, votes+50],
+                     'size': [24, votes+50],
                      'offset': [0, Math.round((votes+50)/2)]
                  }
              }));
@@ -149,6 +154,14 @@
             visibility: false
         });
 
+     let mySideIdea = new SideIdea({
+         planet: globe.planet,
+     });
+
+     let mySideShowIdea = new SideShowIdea({
+         planet: globe.planet,
+     });
+
 	function myFunction(){
             myIdea.setVisibility(true);
 	}
@@ -157,7 +170,7 @@
             myIdea.setVisibility(false);
 	}
 
-	function myCreateIdeaFunction(ll){
+	   function myCreateIdeaFunction(ll){
             pointLayer.add(new Entity({
                 'name': 'New Marker',
                 'lonlat': ll,
@@ -169,6 +182,7 @@
             }));
 	}
 
+
      //Zoom in (deativate for testing, to prevent long loading times)
         //globe.planet.viewExtentArr([8.08, 46.72, 8.31, 46.75]);
 
@@ -176,19 +190,13 @@
             let groundPos = globe.planet.getCartesianFromMouseTerrain();
             var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
             if (pickingObject) {
-                //alert("name: " + e.pickingObject.properties.name);
-                e.pickingObject.showIdea(globe.planet, e.pickingObject.properties.name);
-            //myIdea.setVisibility(true);
-	    }
+                //e.pickingObject.showIdea(globe.planet, e.pickingObject.properties.name);
+			          mySideShowIdea.setFunction(ll);
+                mySideShowIdea.show(e.pickingObject.properties.name);
+	          }
 	          else if(groundPos !== null && ll !== null){//New Idea
-	//idea start
-
-            myIdea.setCartesian3v(groundPos);
-
-	    myIdea.setContent(``);
-			    myIdea.setFunction(myCreateIdea, ll);
-            myIdea.setVisibility(true);
-	//idea end
+			          mySideIdea.setFunction(myCreateIdea, ll);
+                mySideIdea.show();
 	    }
 
         });
@@ -198,12 +206,6 @@
          _coordX = e.x;
          _coordY = e.y;
      });
-     //var notTouch = true;
-     //globe.planet.renderer.events.on("touchmove", function (e) {
-     ////    var touchobj = e.changedTouches[0] // reference first touch point for this event
-         //var dist = Math.hypot(e.x - startx, e.y - starty);
-         //if(dist >= 10) notTouch = false;
-     //});
      globe.planet.renderer.events.on("touchend", function (e) {
          if(Math.hypot(e.x - _coordX, e.y -  _coordY) <= 3){
          let groundPos = globe.planet.getCartesianFromMouseTerrain();
@@ -212,11 +214,12 @@
          try{name = e.pickingObject.properties.name;}
          catch(err){console.log("name not found")};
          if (name) {
-             window.open("mobileShowIdea?IdeaID=" + name, "_top");
+             alert(window.screen.width + "x" + window.screen.height + " und " + document.documentElement.clientWidth + "x" + document.documentElement.clientHeight);
+//             window.open("mobileShowIdea?IdeaID=" + name, "_top");
 	       }
 	       else if(groundPos !== null && ll !== null){//New Idea
-             //create new Idea in new window
-             window.open("mobileIdea?lon=" + ll.lon + "&lat=" + ll.lat, "_top");
+			       mySideIdea.setFunction(myCreateIdea, ll);
+             mySideIdea.show();
 	       }
          }
      });
@@ -228,6 +231,17 @@
 
         window.p = pointLayer;
 
+
+
+     //function to change height of idea after vote
+     //could be improved to also change the color at threshold
+        window.myUpdateIdeaHeight = function myUpdateIdeaHeight(IdeaID, vote){
+            var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == IdeaID);
+            obj2.billboard._height += vote;
+            obj2.billboard._offset.y = Math.round((vote+50)/2);
+            obj2.billboard.setOffset(0,Math.round((vote+50)/2),0);
+            obj2.billboard.setHeight(obj2.billboard._height);
+        };
     </script>
 </body>
 
