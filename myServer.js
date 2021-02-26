@@ -112,7 +112,9 @@ https.createServer(options, function (req, res) {
       });
       req.on('end', function () {
         var formData = qs.parse(requestBody);
-        console.log(`formData ${formData.ideaText}`);
+        console.log(`tags: ${formData.tags}`);
+        console.log(`Skills: ${formData.skills}`);
+        console.log(`Idea created title: ${formData.ideaText}`);
 
         //Write to Database (use in POST answer to save data)
         db.serialize(function () {
@@ -138,6 +140,42 @@ https.createServer(options, function (req, res) {
               // get the last insert id
               console.log(`A row has been inserted with rowid ${this.lastID}`);
             });
+              var tags = formData.tags.split(",");
+              tags.forEach( function(item,index) {
+                db.run('INSERT OR IGNORE INTO Tags(Name) VALUES(?1)', {
+                    1: item.trim()
+                }, function (err) {
+                    if (err) {
+                        return console.log(err.message);
+                    }
+                    db.run('INSERT OR IGNORE INTO Idea_Tags(Idea,Tag) VALUES(?1, ?2)', {
+                        1: lastID,
+                        2: item.trim()
+                    }, function (err) {
+                        if (err) {
+                            return console.log(err.message);
+                        }
+                    });
+                });
+              });
+                  var skills = formData.skills.split(",");
+                  skills.forEach( function(item,index) {
+                      db.run('INSERT OR IGNORE INTO Skills(Name) VALUES(?1)', {
+                          1: item.trim()
+                      }, function (err) {
+                          if (err) {
+                              return console.log(err.message);
+                          }
+                          db.run('INSERT OR IGNORE INTO Idea_Skills(Idea,Skill) VALUES(?1, ?2)', {
+                              1: lastID,
+                              2: item.trim()
+                          }, function (err) {
+                              if (err) {
+                                  return console.log(err.message);
+                              }
+                          });
+                      });
+                  });
               res.writeHead(200, {'Content-Type': 'application/json'});
               res.end(JSON.stringify(lastID));
           });

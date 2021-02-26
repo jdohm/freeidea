@@ -70,9 +70,11 @@ class SideIdea {
                 }};
             var nameText = document.getElementById("nameText").value;
             var ideaText = document.getElementById("ideaText").value;
+            var _tags = document.getElementById("categoriesText").value;
+            var _skills = document.getElementById("skillsText").value;
             xhttp.open("POST", "submitIdea", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+${lon}+"&lat="+${lat});
+            xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+${lon}+"&lat="+${lat}+"&tags="+_tags+"&skills="+_skills);
 ' style="margin-left: 4px" class="save-btn" type="button">Save</button>
 		<button onclick='
         document.getElementById("earth").style["width"] = "100%";
