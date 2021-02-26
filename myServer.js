@@ -203,8 +203,28 @@ https.createServer(options, function (req, res) {
                 if (err) {
                     throw err;
                 }
-                res.writeHead(200, {'Content-Type': 'application/json'});
-                res.end(JSON.stringify(rows));
+                var idearows = rows;
+                let sql = `SELECT Tag FROM Idea_Tags WHERE Idea is ?`;
+                db.all(sql, [formData.IdeaID], (err, rows) => {
+                    if (err) {
+                        throw err;
+                    }
+                    var tags = [];
+                    rows.forEach((row) => {tags.push(row.Tag);});
+                    idearows.tags = tags;
+                    let sql = `SELECT Skill FROM Idea_Skills WHERE Idea is ?`;
+                    db.all(sql, [formData.IdeaID], (err, rows) => {
+                        if (err) {
+                            throw err;
+                        }
+                        var crd = [];
+                        rows.forEach((row) => {crd.push(row.Skill);});
+                        idearows.skills = crd;
+                        res.writeHead(200, {'Content-Type': 'application/json'});
+                        console.log(JSON.stringify(idearows));
+                        res.end(JSON.stringify(idearows));
+                    });
+                });
             });
         });
       });

@@ -463,6 +463,15 @@
     border-right: 1px solid white;
 }
 
+.og-tag-span {
+    background-color: rgb(248, 248, 255);
+    border: 2px solid rgb(220, 220, 220);
+    border-radius: 5px;
+    padding: 0px 3px;
+    margin: 2px 2px;
+    display: inline-block;
+}
+
 .og-compass-button {
     text-align: center;
     clear: none;
