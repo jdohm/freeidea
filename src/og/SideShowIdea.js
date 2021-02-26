@@ -9,9 +9,6 @@ class SideShowIdea {
 
         this._id = SideShowIdea._staticCounter++;
 
-        this._function = null;
-        this._ll = [0, 0];
-
         this.el = null;
         //this._template = getHTML(TEMPLATE, { className: options.className });
     }
@@ -27,17 +24,7 @@ class SideShowIdea {
         this.__counter__ = n;
     }
 
-	  setFunction(ll){
-		    this._ll = ll;
-		    return this;
-	  }
-
     show(IdeaID) {
-        var lat = this._ll.lat;
-        var lon = this._ll.lon;
-        var func = this._function;
-
-
         /*-------------
           get Infos for Idea from server
         */

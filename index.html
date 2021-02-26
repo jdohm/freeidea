@@ -190,8 +190,6 @@
             let groundPos = globe.planet.getCartesianFromMouseTerrain();
             var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
             if (pickingObject) {
-                //e.pickingObject.showIdea(globe.planet, e.pickingObject.properties.name);
-			          mySideShowIdea.setFunction(ll);
                 mySideShowIdea.show(e.pickingObject.properties.name);
 	          }
 	          else if(groundPos !== null && ll !== null){//New Idea
@@ -214,8 +212,7 @@
          try{name = e.pickingObject.properties.name;}
          catch(err){console.log("name not found")};
          if (name) {
-             alert(window.screen.width + "x" + window.screen.height + " und " + document.documentElement.clientWidth + "x" + document.documentElement.clientHeight);
-//             window.open("mobileShowIdea?IdeaID=" + name, "_top");
+             mySideShowIdea.show(name);
 	       }
 	       else if(groundPos !== null && ll !== null){//New Idea
 			       mySideIdea.setFunction(myCreateIdea, ll);
