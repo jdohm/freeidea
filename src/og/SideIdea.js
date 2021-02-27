@@ -41,6 +41,7 @@ class SideIdea {
         if(document.documentElement.clientWidth > document.documentElement.clientHeight && document.documentElement.clientWidth > 800) {
             document.getElementById("earth").style["width"] = "50%";
             document.getElementById("idea").style["width"] = "50%";
+            myUpdateMarkPos(this._ll);
             }
         else {
             document.getElementById("earth").style["width"] = "0%";
@@ -59,6 +60,7 @@ class SideIdea {
         </br>
     <p>This project is under development, your idea could be deleted at any time.</p>
 		<button onclick='
+            myHideMark();
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
@@ -77,6 +79,7 @@ class SideIdea {
             xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+${lon}+"&lat="+${lat}+"&tags="+_tags+"&skills="+_skills);
 ' style="margin-left: 4px" class="save-btn" type="button">Save</button>
 		<button onclick='
+        myHideMark();
         document.getElementById("earth").style["width"] = "100%";
         document.getElementById("idea").style["width"] = "0%";
         document.getElementById("idea").innerHTML = "";

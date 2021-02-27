@@ -203,6 +203,8 @@ https.createServer(options, function (req, res) {
                 if (err) {
                     throw err;
                 }
+                //if IdeaID was not found, cancel following
+                if(!rows) return 0;
                 var idearows = rows;
                 let sql = `SELECT Tag FROM Idea_Tags WHERE Idea is ?`;
                 db.all(sql, [formData.IdeaID], (err, rows) => {

@@ -93,6 +93,7 @@
          }
 	   };
 
+
         let pointLayer = new Vector("points", {
             'clampToGround': true,
             'async': false
@@ -101,6 +102,17 @@
         let pickingObject = null;
         let startClick = new Vec2(),
             startPos;
+
+     pointLayer.add(new IdeaEntity({
+         'name': "mark",
+         'lonlat': [20, 50],
+         'billboard': {
+             'src': './media/mark.svg',
+             'size': [24,24],
+             'offset': [0, 0]
+         },
+         'visibility': false
+     }));
 
         pointLayer.events.on("mouseenter", function (e) {
             e.renderer.handler.canvas.style.cursor = "pointer";
@@ -189,7 +201,11 @@
         globe.planet.renderer.events.on("lclick", function (e) {
             let groundPos = globe.planet.getCartesianFromMouseTerrain();
             var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
-            if (pickingObject) {
+            var name;
+            try{name = e.pickingObject.properties.name;}
+            catch(err){console.log("name not found")};
+            if (name && name !== "mark") {
+                console.log("name is: " + name);
                 mySideShowIdea.show(e.pickingObject.properties.name);
 	          }
 	          else if(groundPos !== null && ll !== null){//New Idea
@@ -211,7 +227,8 @@
          var name;
          try{name = e.pickingObject.properties.name;}
          catch(err){console.log("name not found")};
-         if (name) {
+         if (name && name !== "mark") {
+             console.log("name is: " + name);
              mySideShowIdea.show(name);
 	       }
 	       else if(groundPos !== null && ll !== null){//New Idea
@@ -239,6 +256,16 @@
             obj2.billboard.setOffset(0,Math.round((vote+50)/2),0);
             obj2.billboard.setHeight(obj2.billboard._height);
         };
+
+     window.myUpdateMarkPos = function myUpdateMarkPos(ll){
+         var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == "mark");
+         obj2.setLonLat(ll);
+         obj2.setVisibility(true);
+     };
+     window.myHideMark = function myHideMark(){
+         var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == "mark");
+         obj2.setVisibility(false);
+     };
     </script>
 </body>
 
