@@ -35,7 +35,6 @@ class SideShowIdea {
             if (this.readyState == 4 && this.status == 200) {
                 var obj = JSON.parse(this.responseText);
 
-                document.getElementById("id_IdeaID").innerHTML = obj.AskForIdea;
                 document.getElementById("id_title").innerHTML = obj.TITLE;
                 document.getElementById("id_description").innerHTML = obj.DESCRIPTION;
                 document.getElementById("id_tags").innerHTML = "<div>Topics: </div> ";
@@ -67,7 +66,11 @@ class SideShowIdea {
 <div style="display: flex; align-content: space-between; flex-wrap: nowrap; flex-direction: column; width: 100%; height: 100%; margin: 2%;">
     <div>
     <H2 id="id_title"><H2>
-    <p id="id_IdeaID"></p>
+<button onclick='
+navigator.clipboard.writeText("https://openidea.io/?Idea=" + ${IdeaID});
+alert("https://openidea.io/?Idea=" + ${IdeaID} + " is now in your clipboard, feel free to share");
+
+' >Share</button>
     </br>
     <p id="id_description"></p>
     <div id="id_tags"></div>

@@ -62,6 +62,12 @@
         //xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.open("GET", "getIdeas", true);
         xhttp.send();
+        //if link to Idea
+         var urlParams = new URLSearchParams(window.location.search);
+         if(urlParams.has('Idea')) {
+             //alert(urlParams.get('Idea'));
+             mySideShowIdea.show(urlParams.get('Idea'));
+         }
      });
 
 	   window.myCreateIdea = function myCreateIdea(lon, lat, id, votes){
