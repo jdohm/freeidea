@@ -93,6 +93,7 @@ app.post('/submitVote', function (req, res) {
     });
 });
 
+//receive new ideas from client and save them in db
 app.post('/submitIdea', function (req, res) {
     db.serialize(function () {
         var lastID;

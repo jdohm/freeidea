@@ -26,8 +26,11 @@
         import { Entity } from './src/og/entity/Entity.js';
         import { IdeaEntity } from './src/og/IdeaEntity.js';
         import { Idea } from './src/og/Idea.js';
-        import { SideIdea } from './src/og/SideIdea.js';
-        import { SideShowIdea } from './src/og/SideShowIdea.js';
+        import * as SideIdea from './src/og/SideIdea.js';
+        import * as SideShowIdea from './src/og/SideShowIdea.js';
+        import * as SidePanel from './src/og/SidePanel.js';
+
+     window.SidePanel = SidePanel;
 
      window.addEventListener("pageshow", (e) => {
         var xhttp = new XMLHttpRequest();
@@ -66,7 +69,7 @@
          var urlParams = new URLSearchParams(window.location.search);
          if(urlParams.has('Idea')) {
              //alert(urlParams.get('Idea'));
-             mySideShowIdea.show(urlParams.get('Idea'));
+             SideShowIdea.show(urlParams.get('Idea'));
          }
      });
 
@@ -172,14 +175,6 @@
             visibility: false
         });
 
-     let mySideIdea = new SideIdea({
-         planet: globe.planet,
-     });
-
-     let mySideShowIdea = new SideShowIdea({
-         planet: globe.planet,
-     });
-
 	function myFunction(){
             myIdea.setVisibility(true);
 	}
@@ -212,11 +207,10 @@
             catch(err){console.log("name not found")};
             if (name && name !== "mark") {
                 console.log("name is: " + name);
-                mySideShowIdea.show(e.pickingObject.properties.name);
+                SideShowIdea.show(e.pickingObject.properties.name);
 	          }
 	          else if(groundPos !== null && ll !== null){//New Idea
-			          mySideIdea.setFunction(myCreateIdea, ll);
-                mySideIdea.show();
+                SideIdea.show(ll);
 	    }
 
         });
@@ -235,11 +229,10 @@
          catch(err){console.log("name not found")};
          if (name && name !== "mark") {
              console.log("name is: " + name);
-             mySideShowIdea.show(name);
+             SideShowIdea.show(name);
 	       }
 	       else if(groundPos !== null && ll !== null){//New Idea
-			       mySideIdea.setFunction(myCreateIdea, ll);
-             mySideIdea.show();
+             SideIdea.show(ll);
 	       }
          }
      });
