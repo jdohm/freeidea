@@ -463,6 +463,23 @@
     border-right: 1px solid white;
 }
 
+.oi-overlay-button {
+    float: left;
+    padding: 5px;
+    margin: 5px;
+    background-color: #474e52;
+    color: #b2b2b2;
+    border-radius: 5px;
+    display: inline-block;
+    user-select: none;
+}
+
+.oi-overlay-button:hover {
+    color: #FFFFFF;
+    border: 2px solid #b2b2b2;
+    padding: 3px;
+}
+
 .oi-side-button {
     width: 98%;
     text-align: center;

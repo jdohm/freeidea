@@ -11,7 +11,13 @@
 
 <body>
     <div style="display: flex; flex-direction: column; align-content: space-between; flex-wrap: wrap; width: 100%; height: 100%;">
-    <div id="earth" style="width:100%;height:100%"></div>
+        <div id="earth" style="width:100%;height:100%">
+            <div style="position: absolute; top: 10px; right: 10px;">
+                <div id="btnLogin" class="oi-overlay-button">Login</div>
+                <div id="btnRegister" class="oi-overlay-button">Register</div>
+                <div id="btnLogout" class="oi-overlay-button" style="display: none">Logout</div>
+            </div>
+        </div>
     <div id="idea" style="width:0%;height:100%;display:flex;justify-content:center;align-content: space-between; flex-wrap: wrap; overflow: auto;"></div><!-- flex-direction:column; -->
     </div>
     <script type="module">
@@ -29,6 +35,7 @@
         import * as SideIdea from './src/og/SideIdea.js';
         import * as SideShowIdea from './src/og/SideShowIdea.js';
         import * as SidePanel from './src/og/SidePanel.js';
+        import * as SideLoginRegister from './src/og/SideLoginRegister.js';
 
      window.SidePanel = SidePanel;
 
@@ -195,6 +202,32 @@
             }));
 	}
 
+
+
+     document.getElementById("btnLogin").onclick = function () {
+         //alert("login");
+         SideLoginRegister.showLogin();
+     };
+
+     document.getElementById("btnRegister").onclick = function () {
+         //alert("Register");
+         SideLoginRegister.showRegister();
+     };
+
+
+     document.getElementById("btnLogout").onclick = function () {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("btnLogin").style.display = "inline-block";
+                document.getElementById("btnRegister").style.display = "inline-block";
+                document.getElementById("btnLogout").innerHTML = "Logout: ";
+                document.getElementById("btnLogout").style.display = "none";
+        }};
+        xhttp.open("POST", "submitLogout?_method=DELETE", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send();
+     };
 
      //Zoom in (deativate for testing, to prevent long loading times)
         //globe.planet.viewExtentArr([8.08, 46.72, 8.31, 46.75]);
