@@ -78,7 +78,7 @@ app.get("/", checkAuthenticated, function (req, res) {
 });
 
 //respond to getIdeas GET request
-app.get("/getIdeas", function (req, res) {
+app.get("/getIdeas", checkAuthenticated, function (req, res) {
   //read all places from Database
   db.serialize(function () {
     let sql = `SELECT lon, lat, IdeaID, upvotes, downvotes FROM v_PlacesVotes ORDER BY lat`;
@@ -90,7 +90,7 @@ app.get("/getIdeas", function (req, res) {
 });
 
 //respond to getIdea POST request
-app.post("/getIdea", function (req, res) {
+app.post("/getIdea", checkAuthenticated, function (req, res) {
   if (!req.body.IdeaID) res.json();
   else {
     //Read idea data from database
@@ -117,7 +117,16 @@ app.post("/getIdea", function (req, res) {
               crd.push(row.Skill);
             });
             idearows.skills = crd;
-            res.json(idearows);
+              let sql = `SELECT User FROM Idea_User WHERE Idea is ?`;
+              db.all(sql, [req.body.IdeaID], (err, rows) => {
+                  if (err) throw err;
+                  var crd = [];
+                  rows.forEach((row) => {
+                      crd.push(row.User);
+                  });
+                  idearows.user = crd;
+                  res.json(idearows);
+              });
           });
         });
       });
@@ -126,7 +135,7 @@ app.post("/getIdea", function (req, res) {
 });
 
 //receive votes from client and save them in db
-app.post("/submitVote", function (req, res) {
+app.post("/submitVote", checkAuthenticatedCancel, function (req, res) {
   db.serialize(function () {
     let date_ob = new Date();
     //datenow is date formated as string like this: YYYY-MM-DD HH:mm:ss
@@ -143,11 +152,12 @@ app.post("/submitVote", function (req, res) {
       ":" +
       ("0" + date_ob.getSeconds()).slice(-2);
     db.run(
-      "INSERT INTO Votes(IdeaID,upvote,DateTime) VALUES(?1,?2,?3)",
+      "INSERT INTO Votes(IdeaID,upvote,DateTime,User) VALUES(?1,?2,?3,?4)",
       {
-        1: req.body.IdeaID,
-        2: req.body.upvote,
-        3: datenow,
+          1: req.body.IdeaID,
+          2: req.body.upvote,
+          3: datenow,
+          4: req.user.name
       },
       function (err) {
         if (err) return console.log(err.message);
@@ -158,7 +168,7 @@ app.post("/submitVote", function (req, res) {
 });
 
 //receive new ideas from client and save them in db
-app.post("/submitIdea", function (req, res) {
+app.post("/submitIdea", checkAuthenticatedCancel, function (req, res) {
   db.serialize(function () {
     var lastID;
     db.run(
@@ -183,6 +193,7 @@ app.post("/submitIdea", function (req, res) {
         );
         var tags = req.body.tags.split(",");
         tags.forEach(function (item, index) {
+            if(item.trim() != ""){
           db.run(
             "INSERT OR IGNORE INTO Tags(Name) VALUES(?1)",
             {
@@ -202,9 +213,11 @@ app.post("/submitIdea", function (req, res) {
               );
             }
           );
+            }
         });
         var skills = req.body.skills.split(",");
         skills.forEach(function (item, index) {
+            if(item.trim() != ""){
           db.run(
             "INSERT OR IGNORE INTO Skills(Name) VALUES(?1)",
             {
@@ -224,7 +237,19 @@ app.post("/submitIdea", function (req, res) {
               );
             }
           );
+        }
         });
+        db.run(
+            "INSERT INTO Idea_User(Idea, User, Role) VALUES(?1, ?2, ?3)",
+            {
+                1: lastID,
+                2: req.user.name,
+                3: 0
+            },
+            function (err) {
+                if (err) return console.log(err.message);
+            }
+        );
         res.json(lastID);
       }
     );
@@ -302,9 +327,21 @@ function checkNotAuthenticated(req, res, next) {
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
+    res.append('login', req.user.name);
     console.log("checkAuthenticated " + req.user.name);
-  }
+  } else {res.append('login', false);}
   next();
+}
+
+function checkAuthenticatedCancel(req, res, next) {
+    if (req.isAuthenticated()) {
+        res.append('login', req.user.name);
+        console.log("checkAuthenticated " + req.user.name);
+        next();
+    } else {
+        res.append('login', false);
+        res.json("error");
+    }
 }
 
 //http to https redirect

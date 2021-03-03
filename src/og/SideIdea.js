@@ -4,7 +4,8 @@ function show(ll) {
     myUpdateMarkPos(ll);
     var lon = ll.lon;
     var lat = ll.lat;
-        var html =
+
+        var htmlIdea =
     `<form method="POST" action="submitIdea" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded"  target="_blank">
         <H2>Create your new idea</H2>
 		<textarea id="nameText" style="overflow:auto;resize:none" rows="1" cols="60" name="nameText" placeholder="Title: Using peanuts to end world hunger"></textarea>
@@ -22,8 +23,13 @@ function show(ll) {
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
                     var obj = JSON.parse(this.responseText);
-                    myCreateIdea(${lon},${lat},obj,0);
-                    SidePanel.hide();
+                    if(obj) {
+                        if(obj == "error") alert("error - are you still logged in?");
+                        else {
+                            myCreateIdea(${lon},${lat},obj,0);
+                            SidePanel.hide();
+                            }
+                        }
                 }};
             var nameText = document.getElementById("nameText").value;
             var ideaText = document.getElementById("ideaText").value;
@@ -39,7 +45,15 @@ function show(ll) {
 ' class="oi-side-button" type="button">Cancel</div>
 		</form>
     `;
-        SidePanel.show(html);
+
+    var htmlNotLoggedIn = `
+        <p>To create a new idea, you need to login or register</p>
+		<div onclick='SideLoginRegister.showLogin(); myHideMark();' class="oi-side-button" type="button">Login</div>
+		<div onclick='SideLoginRegister.showRegister(); myHideMark();' class="oi-side-button" type="button">Register</div>
+		<div onclick='myHideMark(); SidePanel.hide();' class="oi-side-button" type="button">Cancel</div>
+`;
+    if(ulogin == "false") {SidePanel.show(htmlNotLoggedIn);}
+    else {SidePanel.show(htmlIdea);}
 };
 
 export { show };

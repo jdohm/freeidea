@@ -37,17 +37,19 @@
         import * as SidePanel from './src/og/SidePanel.js';
         import * as SideLoginRegister from './src/og/SideLoginRegister.js';
 
+     //variable to save if user is logged in 
+     window.ulogin = "false";
+
      window.SidePanel = SidePanel;
+     window.SideLoginRegister = SideLoginRegister;
 
      window.addEventListener("pageshow", (e) => {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var obj = JSON.parse(this.responseText);
-                //Object.keys(this.responseText).forEach(key => {
-                    //console.log(key, obj[key].lon);
-                //});
-
+                window.ulogin = this.getResponseHeader("login");
+                if(window.ulogin != "false") myLogin(window.ulogin);
                 for (var key in obj) {
                     // skip loop if the property is from prototype
                     if (!obj.hasOwnProperty(key)) continue;
@@ -219,10 +221,7 @@
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                document.getElementById("btnLogin").style.display = "inline-block";
-                document.getElementById("btnRegister").style.display = "inline-block";
-                document.getElementById("btnLogout").innerHTML = "Logout: ";
-                document.getElementById("btnLogout").style.display = "none";
+                myLogin("false");
         }};
         xhttp.open("POST", "submitLogout?_method=DELETE", true);
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -297,6 +296,22 @@
      window.myHideMark = function myHideMark(){
          var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == "mark");
          obj2.setVisibility(false);
+     };
+
+     window.myLogin = function myLogin(name){
+         if(name != "false") {
+             document.getElementById("btnLogin").style.display = "none";
+             document.getElementById("btnRegister").style.display = "none";
+             document.getElementById("btnLogout").innerHTML = "Logout: " + name;
+             document.getElementById("btnLogout").style.display = "inline-block";
+             window.ulogin = name;
+         } else {
+             document.getElementById("btnLogin").style.display = "inline-block";
+             document.getElementById("btnRegister").style.display = "inline-block";
+             document.getElementById("btnLogout").innerHTML = "Logout: ";
+             document.getElementById("btnLogout").style.display = "none";
+             window.ulogin = "false";
+         }
      };
     </script>
 </body>

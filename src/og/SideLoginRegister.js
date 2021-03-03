@@ -36,10 +36,7 @@ function showLogin() {
                     }
                     else {
                         //alert("welcome " + obj + "!");
-                        document.getElementById("btnLogin").style.display = "none";
-                        document.getElementById("btnRegister").style.display = "none";
-                        document.getElementById("btnLogout").innerHTML = "Logout: " + obj;
-                        document.getElementById("btnLogout").style.display = "inline-block";
+                        myLogin(obj);
                         SidePanel.hide();
                     }
                 }};

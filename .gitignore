@@ -9,7 +9,7 @@ Debug
 
 eslint
 
-db/Ideas.db
+*.db
 node_modules
 .eslintrc
 .csslintrc
