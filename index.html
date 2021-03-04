@@ -31,6 +31,7 @@
         import { Vec2 } from './src/og/math/Vec2.js';
         import { Entity } from './src/og/entity/Entity.js';
         import { IdeaEntity } from './src/og/IdeaEntity.js';
+        import { LonLat } from '../../src/og/LonLat.js';
         import { Idea } from './src/og/Idea.js';
         import * as SideIdea from './src/og/SideIdea.js';
         import * as SideShowIdea from './src/og/SideShowIdea.js';
@@ -84,25 +85,26 @@
 
 	   window.myCreateIdea = function myCreateIdea(lon, lat, id, votes){
          console.log("got " + votes + " votes");
+         var ideaCoords = [];
+         ideaCoords.push(new LonLat(lon, lat,  0));
+         ideaCoords.push(new LonLat(lon, lat,  500000+votes*1000));
          if(votes >= 0){
          pointLayer.add(new IdeaEntity({
              'name': id,
-             'lonlat': [lon, lat],
-             'billboard': {
-                 'src': './media/pos.png',
-                 'size': [24, votes+50],
-                 'offset': [0, Math.round((votes+50)/2)]
+             'polyline': {
+                 'pathLonLat': [ideaCoords],
+                 'thickness': 12,
+                 'color': "rgb(255-votes*5,255,0)"
              }
          }));
          }
-         else if(votes > -48) {
+         else if(votes > -50) {
              pointLayer.add(new IdeaEntity({
                  'name': id,
-                 'lonlat': [lon, lat],
-                 'billboard': {
-                     'src': './media/neg.png',
-                     'size': [24, votes+50],
-                     'offset': [0, Math.round((votes+50)/2)]
+                 'polyline': {
+                     'pathLonLat': [ideaCoords],
+                     'thickness': 12,
+                     'color': "rgb(255,255-votes*5,0)"
                  }
              }));
          }
@@ -113,7 +115,6 @@
 
 
         let pointLayer = new Vector("points", {
-            'clampToGround': true,
             'async': false
         });
 
