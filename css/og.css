@@ -481,10 +481,10 @@
 }
 
 .oi-side-button {
-    width: 98%;
+    width: calc(100% - 10px );
     text-align: center;
     float: left;
-    padding: 1%;
+    padding: 5px;
     margin: 1% 0%;
     background-color: #474e52;
     color: #b2b2b2;
