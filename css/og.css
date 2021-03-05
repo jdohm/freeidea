@@ -538,3 +538,8 @@
 textarea {
     width: 100%;
     overflow:auto;
+}
+
+body {
+    margin: 0px;
+}

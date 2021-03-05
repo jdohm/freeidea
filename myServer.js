@@ -316,6 +316,7 @@ app.post("/submitRegister", async function (req, res) {
 app.use("/src", express.static(path.join(__dirname, "src")));
 app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/media", express.static(path.join(__dirname, "media")));
+app.use("/res", express.static(path.join(__dirname, "res")));
 
 //check if user is not authentcated
 function checkNotAuthenticated(req, res, next) {
