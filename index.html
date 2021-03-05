@@ -63,23 +63,15 @@
                     if(obj2  == undefined) {
                         myCreateIdea(obj[key].lon, obj[key].lat, obj[key].IdeaID, obj[key].upvotes-obj[key].downvotes);
                         console.log("created Idea " + pointLayer._entities[key].properties.name);
-                    } //else if necessary update size of existing idea beam
-                    else if(obj2.billboard._height !== (obj[key].upvotes-obj[key].downvotes+50)) {
-                        console.log("wrong size");
-                        obj2.billboard._height = (obj[key].upvotes-obj[key].downvotes+50);
-                        obj2.billboard.setHeight(obj[key].upvotes-obj[key].downvotes+50);
                     }
                 }
             }
         };
-        //xhttp.setRequestHeader("Accept", "application/json");
-        //xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.open("GET", "getIdeas", true);
         xhttp.send();
         //if link to Idea
          var urlParams = new URLSearchParams(window.location.search);
          if(urlParams.has('Idea')) {
-             //alert(urlParams.get('Idea'));
              SideShowIdea.show(urlParams.get('Idea'));
          }
      });
@@ -94,7 +86,7 @@
              'name': id,
              'polyline': {
                  'pathLonLat': [ideaCoords],
-                 'thickness': 12,
+                 'thickness': 20,
                  'color': "rgb(255-votes*5,255,0)"
              }
          }));
@@ -104,7 +96,7 @@
                  'name': id,
                  'polyline': {
                      'pathLonLat': [ideaCoords],
-                     'thickness': 12,
+                     'thickness': 20,
                      'color': "rgb(255,255-votes*5,0)"
                  }
              }));
@@ -242,6 +234,8 @@
             catch(err){console.log("name not found")};
             if (name && name !== "mark") {
                 console.log("name is: " + name);
+                //hide marker on map if last sidepanel was new idea panel
+                myHideMark();
                 SideShowIdea.show(e.pickingObject.properties.name);
 	          }
 	          else if(groundPos !== null && ll !== null){//New Idea
@@ -264,6 +258,8 @@
          catch(err){console.log("name not found")};
          if (name && name !== "mark") {
              console.log("name is: " + name);
+             //hide marker on map if last sidepanel was new idea panel
+             myHideMark();
              SideShowIdea.show(name);
 	       }
 	       else if(groundPos !== null && ll !== null){//New Idea
@@ -279,21 +275,11 @@
 
         window.p = pointLayer;
 
-
-
-     //function to change height of idea after vote
-     //could be improved to also change the color at threshold
-        window.myUpdateIdeaHeight = function myUpdateIdeaHeight(IdeaID, vote){
-            var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == IdeaID);
-            obj2.billboard._height += vote;
-            obj2.billboard._offset.y = Math.round((vote+50)/2);
-            obj2.billboard.setOffset(0,Math.round((vote+50)/2),0);
-            obj2.billboard.setHeight(obj2.billboard._height);
-        };
-
      window.myUpdateMarkPos = function myUpdateMarkPos(ll){
          var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == "mark");
-         obj2.setLonLat(ll);
+         var _ll = ll;
+         _ll.height = 0;
+         obj2.setLonLat(_ll);
          obj2.setVisibility(true);
      };
      window.myHideMark = function myHideMark(){

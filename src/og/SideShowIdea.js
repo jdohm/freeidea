@@ -56,20 +56,14 @@ alert("https://openidea.io/?Idea=" + ${IdeaID} + " is now in your clipboard, fee
             xhttp.open("POST", "submitVote", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.send("IdeaID="+${IdeaID}+"&upvote=1");
-            myUpdateIdeaHeight(${IdeaID}, 1);
-            document.getElementById("earth").style["width"] = "100%";
-            document.getElementById("idea").style["width"] = "0%";
-            document.getElementById("idea").innerHTML = "";
+            SidePanel.hide();
         '>
         <img src="./media/down.svg" id="down-btn" alt="Vote Down" style="width:49%;" onclick='
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", "submitVote", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.send("IdeaID="+${IdeaID}+"&upvote=0");
-            myUpdateIdeaHeight(${IdeaID}, -1);
-            document.getElementById("earth").style["width"] = "100%";
-            document.getElementById("idea").style["width"] = "0%";
-            document.getElementById("idea").innerHTML = "";
+            SidePanel.hide();
         '>
 <div onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button">Back</div> </div>
 </div>
