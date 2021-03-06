@@ -6,11 +6,11 @@ function show(ll) {
     var lat = ll.lat;
 
         var htmlIdea =
-    `<form method="POST" action="submitIdea" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded"  target="_blank">
+    `<form method="POST" action="submitIdea" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded"  target="_blank" name="idea_form">
         <H2>Create your new idea</H2>
-		<textarea id="nameText" style="overflow:auto;resize:none" rows="1" cols="60" name="nameText" placeholder="Title: Using peanuts to end world hunger"></textarea>
+		<textarea id="nameText" style="overflow:auto;resize:none" rows="1" cols="60" name="nameText" placeholder="Title: Using peanuts to end world hunger" required></textarea>
         <H3>Please describe your Idea:</h3>
-		<textarea id="ideaText" style="overflow:auto;resize:none" rows="5" cols="60" name="ideaText" placeholder="Enter description"></textarea>
+		<textarea id="ideaText" style="overflow:auto;resize:none" rows="5" cols="60" name="ideaText" placeholder="Enter description" required></textarea>
 	    <p>Add topics</p>
 		<textarea id="categoriesText" style="overflow:auto;resize:none" rows="1" cols="60" name="categoriesText" placeholder="social, environment, it, ..."></textarea>
 	    <p>Needed skills</p>
@@ -18,6 +18,16 @@ function show(ll) {
         </br>
     <p>This project is under development, your idea could be deleted at any time.</p>
 		<div onclick='
+            if(!document.forms.idea_form.nameText.checkValidity()) {
+                document.getElementById("nameText").placeholder = "Can&#39t be empty";
+                document.getElementById("nameText").style.background = "#ff6666";
+                return;
+            }
+            if(!document.forms.idea_form.ideaText.checkValidity()) {
+                document.getElementById("ideaText").placeholder = "Can&#39t be empty";
+                document.getElementById("ideaText").style.background = "#ff6666";
+                return;
+            }
             myHideMark();
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
