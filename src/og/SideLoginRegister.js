@@ -6,8 +6,8 @@ function showLogin() {
 
   <fieldset>
     <legend>Login</legend>
-    <label for="email">E-mail address:</label><br>
-    <input type="email" id="email" name="email" placeholder="example@provider.com" required>
+    <label for="email">E-mail address or username:</label><br>
+    <input id="email" name="email" placeholder="example@provider.com" required>
     <span id="error_mail"></span><br>
     <br>
     <label for="password" required>Password:</label><br>

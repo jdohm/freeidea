@@ -27,7 +27,15 @@ initializePassport(passport, async function getUserByEmail(email) {
     let sql = `SELECT name, email, pwHash password FROM User WHERE email is ?`;
     db.get(sql, [email], (err, rows) => {
       if (err) throw err;
-      resolve(rows);
+        //if no user with this email was found, check if a username with this string exists
+        if (rows == null) {
+            sql = `SELECT name, email, pwHash password FROM User WHERE name is ?`;
+            db.get(sql, [email], (err, rows) => {
+                if (err) throw err;
+                resolve(rows);
+            });
+        }
+        else resolve(rows);
     });
   });
 });
