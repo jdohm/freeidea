@@ -10,6 +10,7 @@ const https = require("https");
 var path = require("path");
 var bcrypt = require("bcrypt");
 
+var request = require('request');
 const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
@@ -258,6 +259,53 @@ app.post("/submitIdea", checkAuthenticatedCancel, function (req, res) {
                 if (err) return console.log(err.message);
             }
         );
+
+    /*****************************|
+    |  mastodon part start        |
+    |*****************************/
+          if(req.body.mastodon == "true"){
+              console.log("publish on mastodon: " + req.body.mastodon);
+          var tagsBody = "";
+
+          tags.some(function(item, index) {
+              if(item.trim() != "") {
+                  tagsBody += ("#" + item.trim() + " ");
+                  console.log("item: " + index + "tag: " + "#" + item.trim() + " ");
+              }
+              //if 3 tags written stop function
+              if(index >= 2) return true;
+              else return false;
+          });
+
+          console.log("tagsBody " + tagsBody);
+
+          var statusText = truncate(req.body.nameText + "\n" + req.body.ideaText, 425)
+              + "\n" + "https://openidea.io/?Idea=" + lastID + "\n"
+              + tagsBody;
+
+          var jsonBody = {'status': truncate(statusText, 425),
+                          'visibility': 'unlisted'}// public, unlisted, private, direct
+          ;
+          var clientServerOptions = {
+              url: 'https://botsin.space/api/v1/statuses',
+              body: JSON.stringify(jsonBody),
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization' : 'Bearer ' + process.env.MASTODON_ACCESS_TOKEN
+              }
+          };
+          request(clientServerOptions, function(error, response, body){
+              // console.log(body);
+          });
+
+          function truncate(str, n){
+              return (str.length > n) ? str.substr(0, n-3) + '...' : str;
+          };
+        }
+    /*****************************|
+    |  mastodon part end          |
+    |*****************************/
         res.json(lastID);
       }
     );

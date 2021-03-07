@@ -15,7 +15,9 @@ function show(ll) {
 		<textarea id="categoriesText" style="overflow:auto;resize:none" rows="1" cols="60" name="categoriesText" placeholder="social, environment, it, ..."></textarea>
 	    <p>Needed skills</p>
 		<textarea id="skillsText" style="overflow:auto;resize:none" rows="1" cols="60" name="skillsText" placeholder="programming, management, UI-Design, knitting, ..."></textarea>
-        </br>
+        </br><br>
+    <input type="checkbox" id="mastodon" name="mastodon">
+    <label for="mastodon">Publish idea on mastodon</label><br>
     <p>This project is under development, your idea could be deleted at any time.</p>
 		<div onclick='
             if(!document.forms.idea_form.nameText.checkValidity()) {
@@ -45,9 +47,10 @@ function show(ll) {
             var ideaText = document.getElementById("ideaText").value;
             var _tags = document.getElementById("categoriesText").value;
             var _skills = document.getElementById("skillsText").value;
+            var _mastodon = document.getElementById("mastodon").checked;
             xhttp.open("POST", "submitIdea", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+${lon}+"&lat="+${lat}+"&tags="+_tags+"&skills="+_skills);
+            xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+${lon}+"&lat="+${lat}+"&tags="+_tags+"&skills="+_skills+"&mastodon="+_mastodon);
 ' class="oi-side-button" type="button">Save</div>
 		<div onclick='
         myHideMark();
