@@ -19,6 +19,15 @@ function show(IdeaID) {
                     document.getElementById("down-btn").onclick = function () {SideLoginRegister.showLogin();};
                 }
 
+                //cactus chat
+                initComments({
+                        node: document.getElementById("comment-section"),
+                        defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
+                        serverName: "cactus.chat",
+                        siteName: "openidea.io",
+                        commentSectionId: "Idea#" + IdeaID
+                    });
+                //cactus chat end
                 document.getElementById("id_title").innerHTML = obj.TITLE;
                 document.getElementById("id_description").innerHTML = obj.DESCRIPTION;
                 document.getElementById("id_tags").innerHTML = "<span>Topics: </span> ";
