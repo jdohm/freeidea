@@ -3,7 +3,7 @@
 var first = '<div style="display: flex; align-content: space-between; flex-wrap: nowrap; flex-direction: column; width: 96%; height: 96%; margin: 2%;">'; 
 
 
-var last = '<div onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button">Back</div> </div>';
+var last = '</div>';
 
 function show(html) {
     if(document.documentElement.clientWidth > document.documentElement.clientHeight && document.documentElement.clientWidth > 800) {
@@ -20,7 +20,7 @@ function show(html) {
         document.getElementById("earth").style["width"] = "0%";
         document.getElementById("idea").style["width"] = "100%";
     }
-    document.getElementById("idea").innerHTML = first + html; // + last;
+    document.getElementById("idea").innerHTML = first + html + last;
 
 };
 

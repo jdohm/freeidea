@@ -76,16 +76,15 @@ function show(IdeaID) {
         xhttp.send("IdeaID="+${IdeaID}+"&upvote=0");
         SidePanel.hide();
         '>
-    <div onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button">Back</div>
+    <input onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Back"/>
 </div>
     `;
     SidePanel.show(html);
 
     var LoginRegister = `
-    <span id="btnLogin" class="oi-link" onclick="SideLoginRegister.showLogin();">Login</span>
+    <a href="#" id="btnLogin" class="oi-link" onclick="SideLoginRegister.showLogin();">Login</a>
     <span>or</span>
-    <span id="btnRegister" class="oi-link" onclick="SideLoginRegister.showRegister();">Register</span>
-
+    <a href="#" id="btnRegister" class="oi-link" onclick="SideLoginRegister.showRegister();">Register</a>
     <span>to vote this idea</span>`;
 };
 

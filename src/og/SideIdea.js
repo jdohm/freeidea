@@ -1,5 +1,40 @@
 'use strict';
 
+function save(lon, lat){
+        if(!document.forms.idea_form.nameText.checkValidity()) {
+            document.getElementById("nameText").placeholder = "Can&#39t be empty";
+            document.getElementById("nameText").style.background = "#ff6666";
+            return;
+        }
+        if(!document.forms.idea_form.ideaText.checkValidity()) {
+            document.getElementById("ideaText").placeholder = "Can&#39t be empty";
+            document.getElementById("ideaText").style.background = "#ff6666";
+            return;
+        }
+        myHideMark();
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var obj = JSON.parse(this.responseText);
+                if(obj) {
+                    if(obj == "error") alert("error - are you still logged in?");
+                    else {
+                        myCreateIdea(lon,lat,obj,0);
+                        SidePanel.hide();
+                        }
+                    }
+            }};
+        var nameText = document.getElementById("nameText").value;
+        var ideaText = document.getElementById("ideaText").value;
+        var _tags = document.getElementById("categoriesText").value;
+        var _skills = document.getElementById("skillsText").value;
+        var _mastodon = document.getElementById("mastodon").checked;
+        xhttp.open("POST", "submitIdea", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+lon+"&lat="+lat+"&tags="+_tags+"&skills="+_skills+"&mastodon="+_mastodon);
+};
+export { save };
+
 function show(ll) {
     myUpdateMarkPos(ll);
     var lon = ll.lon;
@@ -24,54 +59,22 @@ function show(ll) {
 </div>
 <div style="flex-grow: 0;">
     <p>This project is under development, your idea could be deleted at any time.</p>
-		<div onclick='
-        if(!document.forms.idea_form.nameText.checkValidity()) {
-            document.getElementById("nameText").placeholder = "Can&#39t be empty";
-            document.getElementById("nameText").style.background = "#ff6666";
-            return;
-        }
-        if(!document.forms.idea_form.ideaText.checkValidity()) {
-            document.getElementById("ideaText").placeholder = "Can&#39t be empty";
-            document.getElementById("ideaText").style.background = "#ff6666";
-            return;
-        }
-        myHideMark();
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var obj = JSON.parse(this.responseText);
-                if(obj) {
-                    if(obj == "error") alert("error - are you still logged in?");
-                    else {
-                        myCreateIdea(${lon},${lat},obj,0);
-                        SidePanel.hide();
-                        }
-                    }
-            }};
-        var nameText = document.getElementById("nameText").value;
-        var ideaText = document.getElementById("ideaText").value;
-        var _tags = document.getElementById("categoriesText").value;
-        var _skills = document.getElementById("skillsText").value;
-        var _mastodon = document.getElementById("mastodon").checked;
-        xhttp.open("POST", "submitIdea", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("nameText="+nameText+"&ideaText="+ideaText+"&lon="+${lon}+"&lat="+${lat}+"&tags="+_tags+"&skills="+_skills+"&mastodon="+_mastodon);
-        ' class="oi-side-button" type="button">Save</div>
-		<div onclick='
+		<input onclick='SideIdea.save(${lon}, ${lat});' class="oi-side-button" type="button" value="Save"/>
+		<input onclick='
         myHideMark();
         SidePanel.hide();
-        ' class="oi-side-button" type="button">Cancel</div>
+        ' class="oi-side-button" type="button" value="Cancel"/>
 </div>
     `;
 
     var htmlNotLoggedIn = `
 <div style="overflow-y: auto;flex-grow: 1;">
     <p>To create a new idea, you need to login or register</p>
-		<div onclick='SideLoginRegister.showLogin(); myHideMark();' class="oi-side-button" type="button">Login</div>
-		<div onclick='SideLoginRegister.showRegister(); myHideMark();' class="oi-side-button" type="button">Register</div>
+		<input value="Login" onclick='SideLoginRegister.showLogin(); myHideMark();' class="oi-side-button" type="button"/>
+		<input value="Register" onclick='SideLoginRegister.showRegister(); myHideMark();' class="oi-side-button" type="button"/>
 </div>
 <div style="flex-grow: 0;">
-		<div onclick='myHideMark(); SidePanel.hide();' class="oi-side-button" type="button">Cancel</div>
+		<input value="Cancel" onclick='myHideMark(); SidePanel.hide();' class="oi-side-button" type="button"/>
 </div>
 `;
     if(ulogin == "false") {SidePanel.show(htmlNotLoggedIn);}
