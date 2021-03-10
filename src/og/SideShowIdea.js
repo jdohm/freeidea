@@ -61,21 +61,23 @@ function show(IdeaID) {
     <div id="comment-section"></div>
 </div>
 <div style="flex-grow: 0;">
-    <H3 id="id_vote">Vote this idea</H3></br>
-    <img src="./media/up.svg" alt="Vote Up!" id="up-btn" style="width:49%;margin-top: 6px;vertical-align: bottom;" onclick='
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "submitVote", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("IdeaID="+${IdeaID}+"&upvote=1");
-        SidePanel.hide();
-        '>
-    <img src="./media/down.svg" id="down-btn" alt="Vote Down" style="width:49%;" onclick='
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "submitVote", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("IdeaID="+${IdeaID}+"&upvote=0");
-        SidePanel.hide();
-        '>
+    <H3 id="id_vote">Vote this idea</H3>
+    <div style="display: flex;justify-content:center;">
+        <img src="./media/up.svg" alt="Vote Up!" id="up-btn" style="max-height:15vh;max-width:49%;vertical-align: bottom;" onclick='
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "submitVote", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("IdeaID="+${IdeaID}+"&upvote=1");
+            SidePanel.hide();
+            '>
+        <img src="./media/down.svg" id="down-btn" alt="Vote Down" style="max-height:15vh;max-width:49%;vertical-align: bottom;" onclick='
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("POST", "submitVote", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("IdeaID="+${IdeaID}+"&upvote=0");
+            SidePanel.hide();
+            '>
+    </div>
     <input onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Back"/>
 </div>
     `;
