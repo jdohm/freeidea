@@ -78,7 +78,8 @@ function show(IdeaID) {
             SidePanel.hide();
             '>
     </div>
-    <input onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Back"/>
+    <input onclick="SideShowIdea.showSupport(${IdeaID})" style="width:33%; margin: 1% 1%;" type="button" value="Support request" class="oi-overlay-button" id="support-btn"/>
+    <input style="width:65%;" onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Back"/>
 </div>
     `;
     SidePanel.show(html);
@@ -92,3 +93,45 @@ function show(IdeaID) {
 
 export { show };
 
+function showSupport(IdeaID){
+        var html =
+            `
+<div style="flex-grow: 0;">
+    <H2 id="id_title" style="display: inline-block;">Support Request</H2>
+</div>
+<div style="overflow-y: auto;flex-grow: 1;">
+        <H2>Please describe your request</H2>
+        <p>consider logging in, to provide us the option to contact you.</p>
+        <textarea id="text" style="overflow:auto;" rows="6" cols="60" name="text" placeholder="report: reason \nupdated description: ... \nadd tag: ... \netc." required></textarea>
+</div>
+<div style="flex-grow: 0;">
+    <input onclick="SideShowIdea.sendSupportRequest(${IdeaID})" id="support-btn" class="oi-side-button" type="button" value="Submit request"/>
+    <input onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Cancel"/>
+</div>
+    `;
+    SidePanel.show(html);
+}
+
+export { showSupport };
+
+function sendSupportRequest(IdeaID){
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            alert(this.responseText);
+            // var obj = JSON.parse(this.responseText);
+            // if(obj) {
+            //     if(obj == "error") alert("error - are you still logged in?");
+            //     else {
+            //         myCreateIdea(lon,lat,obj,0);
+            //         SidePanel.hide();
+            //         }
+            //     }
+        }};
+    var _testText = document.getElementById("text").value;
+    xhttp.open("POST", "submitSupportRequest", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("text="+_testText+"&IdeaID="+IdeaID);
+}
+
+export { sendSupportRequest };

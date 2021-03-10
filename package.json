@@ -35,21 +35,22 @@
     "express": "^4.17.1",
     "express-flash": "0.0.2",
     "express-session": "^1.17.1",
+    "matrix-js-sdk": "^9.8.0",
     "method-override": "^3.0.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "sqlite3": "^5.0.1"
   },
-    "exports": {
-        ".": "./src/og/index.js",
-        "./layer": "./src/og/layer/index.js",
-        "./bv": "./src/og/bv/index.js",
-        "./terrain": "./src/og/terrain/index.js",
-        "./entity": "./src/og/entity/index.js",
-        "./control": "./src/og/control/index.js",
-        "./webgl": "./src/og/webgl/index.js",
-        "./scene": "./src/og/scene/index.js"
-    },
+  "exports": {
+    ".": "./src/og/index.js",
+    "./layer": "./src/og/layer/index.js",
+    "./bv": "./src/og/bv/index.js",
+    "./terrain": "./src/og/terrain/index.js",
+    "./entity": "./src/og/entity/index.js",
+    "./control": "./src/og/control/index.js",
+    "./webgl": "./src/og/webgl/index.js",
+    "./scene": "./src/og/scene/index.js"
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.12.17",
     "@rollup/plugin-replace": "^4.1.0",
