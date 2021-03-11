@@ -9,7 +9,7 @@ const sqlite3 = require("sqlite3").verbose();
 const https = require("https");
 var path = require("path");
 var bcrypt = require("bcrypt");
-
+const sdk = require("matrix-js-sdk");
 var request = require('request');
 const passport = require("passport");
 const flash = require("express-flash");
@@ -20,6 +20,12 @@ const app = express();
 const http = express();
 const port = process.argv[2] || 80;
 const portSSL = process.argv[3] || 443;
+
+//matrix login
+const client = sdk.createClient("https://matrix.org");
+client.login("m.login.password", {"user": "openidea", "password": process.env.MATRIX_PASSWORD}).then((response) => {
+    console.log(response.access_token);
+});
 
 //usermanagement using passport
 const initializePassport = require("./passport-config");
@@ -310,6 +316,30 @@ app.post("/submitIdea", checkAuthenticatedCancel, function (req, res) {
       }
     );
   });
+});
+
+
+//support request to matrix room
+app.post("/submitSupportRequest", function (req, res, next) {
+    client.startClient();
+
+    var testRoomId = "!HTcpkpXWLaaunauYsD:cactus.chat";
+
+    var content = {
+        "body": "#" + req.body.IdeaID + "\n" + req.body.text + "\n\nsend from: ",
+        "msgtype": "m.text"
+    };
+    if(req.user){
+        content.body += req.user.email;
+    }
+    else {content.body += "anonymous";}
+
+    client.sendEvent(testRoomId, "m.room.message", content, "").then((res) => {
+        // message sent successfully
+    }).catch((err) => {
+        console.log(err);
+    });
+    res.send("Message send to support");
 });
 
 //handle login POST request
