@@ -84,7 +84,21 @@ function sendRegister() {
                 var xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function() {
                     if (this.readyState == 4 && this.status == 200) {
-                        SidePanel.hide();
+                        var obj = JSON.parse(this.responseText);
+                        if(obj.hasOwnProperty("message")) {
+                            if(obj.message.search("name") >= 1) {
+                                document.getElementById("error_name").innerHTML = "Username already in use.";
+                                document.getElementById("name").style.background = "#ff6666";
+                            }
+                            else if(obj.message.search("email") >= 1){
+                                document.getElementById("error_mail").innerHTML = "Email already in use.";
+                                document.getElementById("email").style.background = "#ff6666";
+                            }
+                            else alert(obj.message);
+                        }
+                        else {
+                            SidePanel.hide();
+                        }
                     }};
                 xhttp.open("POST", "submitRegister", true);
                 xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");

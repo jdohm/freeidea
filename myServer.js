@@ -358,8 +358,11 @@ app.post("/submitRegister", async function (req, res) {
           3: hashedPassword,
         },
         function (err) {
-          if (err) return console.log(err.message);
-          res.json(this.lastID);
+            if (err) {
+                console.log(err.message);
+                res.json({"message": err.message});
+            }
+            res.json("success");
         }
       );
     });
