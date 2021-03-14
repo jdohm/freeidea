@@ -31,11 +31,11 @@
         import { WMS } from './src/og/layer/WMS.js';
         import { Vector } from './src/og/layer/Vector.js';
         import { Vec2 } from './src/og/math/Vec2.js';
+        import { Vec3 } from './src/og/math/Vec3.js';
         import { Entity } from './src/og/entity/Entity.js';
-        import { IdeaEntity } from './src/og/IdeaEntity.js';
         import { LonLat } from './src/og/LonLat.js';
-        import { Idea } from './src/og/Idea.js';
         import { SkyBox } from './src/og/scene/SkyBox.js';
+        import { Quat } from './src/og/math/Quat.js';
         import * as SideIdea from './src/og/SideIdea.js';
         import * as SideShowIdea from './src/og/SideShowIdea.js';
         import * as SidePanel from './src/og/SidePanel.js';
@@ -80,46 +80,43 @@
          }
      });
 
-	   window.myCreateIdea = function myCreateIdea(lon, lat, id, votes){
-         console.log("got " + votes + " votes");
-         var ideaCoords = [];
-         ideaCoords.push(new LonLat(lon, lat,  0));
-         ideaCoords.push(new LonLat(lon, lat,  500000+votes*1000));
-         if(votes >= 0){
-         pointLayer.add(new IdeaEntity({
-             'name': id,
-             'polyline': {
-                 'pathLonLat': [ideaCoords],
-                 'thickness': 20,
-                 'color': "rgb(255-votes*5,255,0)"
-             }
-         }));
-         }
-         else if(votes > -50) {
-             pointLayer.add(new IdeaEntity({
-                 'name': id,
-                 'polyline': {
-                     'pathLonLat': [ideaCoords],
-                     'thickness': 20,
-                     'color': "rgb(255,255-votes*5,0)"
-                 }
-             }));
-         }
-         else {
-             //ignore vote, don't display
-         }
-	   };
-
-
         let pointLayer = new Vector("points", {
-            'async': false
+            'async': false,
+            'polygonOffsetUnits': -100
         });
+
+	   window.myCreateIdea = function myCreateIdea(lon, lat, id, votes){
+        if(votes > -50){
+            var colorR = 1.0;
+            var colorG = 1.0;
+            if(votes >= 0)   colorR = 1-votes*(1/50);
+            else             colorG = 1-votes*(-1/50);
+            if(votes >= 50)  colorR = 0;
+            if(votes <= -50) colorG = 0;
+            let size = Math.exp(-70/(votes+50))+0.3;
+            console.log("red: " + colorR + " green: " + colorG);
+            pointLayer.add(new Entity({
+                'name': id,
+                'lonlat': [lon, lat, size*100000*4],
+                'sphere': {
+                    'radius': size*100000,
+                    //rotate sphere to normal of globe
+                    'orientation': new Quat().setFromEulerAngles(-90+Math.cos(lon*Math.PI/180)*lat,-Math.sin(lon*Math.PI/180)*lat,lon),
+                    "latBands": 3,
+                    "lonBands": 200,
+                    'scale': new Vec3(1.0,4.0,1.0),
+                    'color': [colorR, colorG, 0.0, 1.0],
+                    "src": "./svgTest/?IdeaID=" + id
+                }
+            }));
+        }
+	   };
 
         let pickingObject = null;
         let startClick = new Vec2(),
             startPos;
 
-     pointLayer.add(new IdeaEntity({
+     pointLayer.add(new Entity({
          'name': "mark",
          'lonlat': [20, 50],
          'billboard': {
@@ -176,33 +173,6 @@
                 }
             }
         }, globe.planet);
-
-        let myIdea = new Idea({
-            planet: globe.planet,
-            offset: [0, -235],
-            visibility: false
-        });
-
-	function myFunction(){
-            myIdea.setVisibility(true);
-	}
-
-	function myHideFunction(){
-            myIdea.setVisibility(false);
-	}
-
-	   function myCreateIdeaFunction(ll){
-            pointLayer.add(new Entity({
-                'name': 'New Marker',
-                'lonlat': ll,
-                'billboard': {
-                    'src': './media/pos.png',
-                    'size': [12, 48],
-                    'offset': [0, 24]
-                }
-            }));
-	}
-
 
 
      document.getElementById("btnLogin").onclick = function () {

@@ -287,7 +287,7 @@ class Vector extends Layer {
             this._stripEntityCollection.add(entity);
         }
 
-        if (entity.polyline || entity.ray) {
+        if (entity.polyline || entity.ray || entity.shape) {
             this._polylineEntityCollection.add(entity);
         }
 
