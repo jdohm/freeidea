@@ -47,7 +47,7 @@ function show(IdeaID) {
         var html =
             `
 <div style="flex-grow: 0;">
-    <H2 id="id_title" style="display: inline-block;"></H2>
+    <H2 id="id_title" style="display: inline-block;margin-top: 0px;margin-bottom: 0px;"></H2>
     <img src="./media/share.svg" alt="Share idea!" id="share-btn" style="height:1.5em;float: right" onclick='
         navigator.clipboard.writeText("https://openidea.io/?Idea=" + ${IdeaID});
         alert("https://openidea.io/?Idea=" + ${IdeaID} + " is now in your clipboard, feel free to share");
@@ -61,7 +61,7 @@ function show(IdeaID) {
     <div id="comment-section"></div>
 </div>
 <div style="flex-grow: 0;">
-    <H3 id="id_vote">Vote this idea</H3>
+    <H3 id="id_vote" style="margin-top: 5px;margin-bottom: 5px;">Vote this idea</H3>
     <div style="display: flex;justify-content:center;">
         <img src="./media/up.svg" alt="Vote Up!" id="up-btn" style="max-height:15vh;max-width:49%;vertical-align: bottom;" onclick='
             var xhttp = new XMLHttpRequest();
@@ -78,8 +78,8 @@ function show(IdeaID) {
             SidePanel.hide();
             '>
     </div>
-    <input onclick="SideShowIdea.showSupport(${IdeaID})" style="width:33%; margin: 1% 1%;" type="button" value="Support request" class="oi-overlay-button" id="support-btn"/>
-    <input style="width:65%;" onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Back"/>
+    <input onclick="SideShowIdea.showSupport(${IdeaID})" style="width:33%; margin: 0% 0.5%;" type="button" value="Support request" class="oi-overlay-button" id="support-btn"/>
+    <input style="width:65%; margin: 0% 0.5%;" onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Back"/>
 </div>
     `;
     SidePanel.show(html);
