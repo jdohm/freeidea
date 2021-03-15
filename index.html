@@ -14,11 +14,12 @@
 <body>
     <div style="display: flex; flex-direction: column; align-content: space-between; flex-wrap: wrap; width: 100%; height: 100%;">
         <div id="earth" style="width:100%;height:100%">
-            <div style="position: absolute; top: 10px; right: 10px;">
+            <div style="position: absolute; top: 12px; right: 12px;">
                 <input type="button" id="btnLogin" class="oi-overlay-button" value="Login"/>
                 <input type="button" id="btnRegister" class="oi-overlay-button" value="Register"/>
                 <input type="button" id="btnLogout" class="oi-overlay-button" style="display: none" value="Logout"/>
             </div>
+            <img style="position: absolute; bottom: 193px; right: 12px;" alt="info" id="info-btn" class="oi-info-button" onclick='SideShowIdea.show(108);'/>
         </div>
         <div id="idea" style="display: flex; flex: auto; flex-direction: column; height:100%; padding: 0 0px;"></div><!-- flex-direction:column; -->
     </div>
@@ -162,18 +163,6 @@
             "terrain": new GlobusTerrain(),
             "layers": [osm, pointLayer]
         });
-
-        globe.planet.renderer.events.on("mousemove", function (e) {
-            if (pickingObject) {
-                var d = new Vec2(e.x, e.y).sub(startClick);
-                var endPos = startPos.add(d);
-                var coords = this.getCartesianFromPixelTerrain(endPos);
-                if (coords) {
-                    pickingObject.setCartesian3v(coords);
-                }
-            }
-        }, globe.planet);
-
 
      document.getElementById("btnLogin").onclick = function () {
          //alert("login");

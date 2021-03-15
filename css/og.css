@@ -482,6 +482,17 @@
     box-shadow: 0 0 10px #474e52;
 }
 
+.oi-info-button {
+    transition: all 0.5s;
+    height: 40px;
+    width: 40px;
+    content:url(./../media/info.svg);
+}
+
+.oi-info-button:hover {
+    content:url(./../media/info_mo.svg);
+}
+
 .oi-side-button {
     font-family : inherit;
     font-size: 1em;

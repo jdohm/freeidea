@@ -69,21 +69,33 @@ app.use(
   })
 );
 
-app.use(flash());
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
   })
 );
+
+app.use((req, res, next) => {
+    if (typeof req.session.isNew === "undefined") {
+        req.session.isNew = true;
+        req.session.save(next);
+    } else if (req.session.isNew) {
+        req.session.isNew = false;
+        req.session.save(next);
+    } else {
+        next();
+    }
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(methodOverride('_method'));
 
 //app start page
 app.get("/", checkAuthenticated, function (req, res) {
-  // res.send(fs.readFileSync('./index.html'));
+    if(req.session.isNew) res.redirect('/?Idea=108');
   try {
   console.log("website username:" + req.user.name + "");
   } catch (error) {
