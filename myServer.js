@@ -124,7 +124,8 @@ app.get("/svgTest", function(req,res) {
         let sql = `SELECT ID, title FROM Idea WHERE ID is ?`;
         db.get(sql, [_id], (err, row) => {
             if (err) throw err;
-            _title = row.title;
+            if(row) _title = row.title;
+            else _title = "title not found";
             // console.log("test query " + _id + " title " + _title);
             var testSVG = `
         <svg

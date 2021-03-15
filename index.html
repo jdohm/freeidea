@@ -95,6 +95,8 @@
             if(votes >= 50)  colorR = 0;
             if(votes <= -50) colorG = 0;
             let size = Math.exp(-70/(votes+50))+0.3;
+            let qq = new Quat().setFromEulerAngles( -90+lat, 0, 0);
+            let qq2 = new Quat().setFromAxisAngle(new Vec3(0,1,0), -lon*Math.PI/180);
             console.log("red: " + colorR + " green: " + colorG);
             pointLayer.add(new Entity({
                 'name': id,
@@ -102,7 +104,7 @@
                 'sphere': {
                     'radius': size*100000,
                     //rotate sphere to normal of globe
-                    'orientation': new Quat().setFromEulerAngles(-90+Math.cos(lon*Math.PI/180)*lat,-Math.sin(lon*Math.PI/180)*lat,lon),
+                    'orientation': qq.mul(qq2),
                     "latBands": 3,
                     "lonBands": 200,
                     'scale': new Vec3(1.0,4.0,1.0),
