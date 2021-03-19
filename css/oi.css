@@ -117,3 +117,42 @@ input.oi-button {
     /* Support for IE. */
     font-feature-settings: 'liga';
 }/* google Material Icons -- end*/
+
+/* css for autocomplete box */
+.tag-collection {
+    position: relative!important;
+    width: 100%;
+    padding: 1rem!important;
+    min-width: 100px;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    margin: 0;
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+.tag-collection li {
+    cursor: pointer;
+}
+
+input::placeholder {
+    color: #111111;
+}
+
+.autoComplete_result {
+    margin-bottom: 0.5rem;
+}
+
+.tag-collection {
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 0;
+    margin-top: 0.5rem;
+    border-radius: 0.6rem;
+    background-color: #fff;
+    box-shadow: 0 3px 6px rgba(149, 157, 165, 0.15);
+    border: 1px solid rgba(33, 33, 33, 0.07);
+    z-index: 1000;
+    outline: none;
+}
