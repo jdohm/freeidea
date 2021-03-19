@@ -105,6 +105,30 @@ app.get("/", checkAuthenticated, function (req, res) {
         res.sendFile(path.join(__dirname + "/index.html"));
     }
 });
+
+
+//respond with topics
+app.get("/getTopics", function (req, res) {
+    //read all topics from Database
+    db.serialize(function () {
+        let sql = `SELECT Name FROM Tags ORDER BY Name`;
+        db.all(sql, [], (err, rows) => {
+            if (err) throw err;
+            res.json(rows);
+        });
+    });
+});
+
+//respond with needed skills
+app.get("/getSkills", function (req, res) {
+    //read all needed skills from Database
+    db.serialize(function () {
+        let sql = `SELECT Name FROM Skills ORDER BY Name`;
+        db.all(sql, [], (err, rows) => {
+            if (err) throw err;
+            res.json(rows);
+        });
+    });
 });
 
 //respond to getIdeas GET request
