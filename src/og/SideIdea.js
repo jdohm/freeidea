@@ -42,43 +42,62 @@ function show(ll) {
 
         var htmlIdea =
     `
-<div style="overflow-y: auto;flex-grow: 1;">
-    <form method="POST" action="submitIdea" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded"  target="_blank" name="idea_form">
-        <H2>Create your new idea</H2>
-        <textarea id="nameText" style="overflow:auto;resize:none" rows="1" cols="60" name="nameText" placeholder="Title: Using peanuts to end world hunger" required></textarea>
-        <H3>Please describe your Idea:</h3>
-        <textarea id="ideaText" style="overflow:auto;resize:none" rows="5" cols="60" name="ideaText" placeholder="Enter description" required></textarea>
-        <p>Add topics</p>
-        <textarea id="categoriesText" style="overflow:auto;resize:none" rows="1" cols="60" name="categoriesText" placeholder="social, environment, it, ..."></textarea>
-        <p>Needed skills</p>
-        <textarea id="skillsText" style="overflow:auto;resize:none" rows="1" cols="60" name="skillsText" placeholder="programming, management, UI-Design, knitting, ..."></textarea>
-        <br> <br>
-        <input type="checkbox" id="mastodon" name="mastodon">
-        <label for="mastodon">Publish idea on mastodon</label><br>
-		</form>
+<div style="overflow-y: auto;overflow-x: hidden;flex-grow: 1;">
+    <form method="POST" action="submitIdea" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded" target="_blank" name="idea_form">
+        <div class="row">
+            <H5>Create your new idea</H5>
+        </div>
+        <div class="input-field col s9">
+            <textarea type="text" id="nameText" name="nameText" class="materialize-textarea validate" required></textarea>
+            <label for="nameText">Title:</label>
+        </div>
+        <div class="input-field col s9">
+            <textarea id="ideaText" name="ideaText" class="materialize-textarea validate" required></textarea>
+            <label for="ideaText">Please describe your Idea:</label>
+        </div>
+        <div class="input-field col s9">
+            <textarea id="categoriesText" name="categoriesText" class="materialize-textarea validate" required></textarea>
+            <label for="categoriesText">Add topics:</label>
+        </div>
+        <div class="input-field col s9">
+            <textarea id="skillsText" name="skillsText" class="materialize-textarea validate" required></textarea>
+            <label for="skillsText">Needed skills:</label>
+        </div>
+        <p>
+            <label>
+                <input type="checkbox" id="mastodon" name="mastodon" />
+                <span>Publish idea on mastodon</span>
+            </label>
+        </p>
+    </form>
 </div>
 <div style="flex-grow: 0;">
     <p>This project is under development, your idea could be deleted at any time.</p>
-		<input onclick='SideIdea.save(${lon}, ${lat});' class="oi-side-button" type="button" value="Save"/>
-		<input onclick='
-        myHideMark();
-        SidePanel.hide();
-        ' class="oi-side-button" type="button" value="Cancel"/>
-</div>
-    `;
+    <button class="btn waves-effect waves-light oi-custom-greys oi-side-button-width" style="margin-bottom: 5px;" type="button" name="back" onclick='SideIdea.save(${lon}, ${lat});'>Save<i class="material-icons left">save</i>
+    </button>
+
+    <button class="btn waves-effect waves-light oi-custom-greys oi-side-button-width" type="button" name="back" onclick='myHideMark(); SidePanel.hide();'>Cancel<i class="material-icons left">arrow_back</i>
+    </button>
+</div>    `;
 
     var htmlNotLoggedIn = `
 <div style="overflow-y: auto;flex-grow: 1;">
     <p>To create a new idea, you need to login or register</p>
-		<input value="Login" onclick='SideLoginRegister.showLogin(); myHideMark();' class="oi-side-button" type="button"/>
-		<input value="Register" onclick='SideLoginRegister.showRegister(); myHideMark();' class="oi-side-button" type="button"/>
+      <div class="row">
+<button class="btn waves-effect waves-light oi-custom-greys oi-side-button-width" type="button" name="back" onclick='SideLoginRegister.showLogin(); myHideMark();'>Login<i class="material-icons right">send</i>
+      </div>
+      <div class="row">
+<button class="btn waves-effect waves-light oi-custom-greys oi-side-button-width" type="button" name="back" onclick='SideLoginRegister.showRegister(); myHideMark();'>Register<i class="material-icons right"> send </i>
+      </div>
 </div>
 <div style="flex-grow: 0;">
-		<input value="Cancel" onclick='myHideMark(); SidePanel.hide();' class="oi-side-button" type="button"/>
+<button class="btn waves-effect waves-light oi-custom-greys oi-side-button-width" type="button" name="back" onclick='myHideMark(); SidePanel.hide();'>Back<i class="material-icons left">arrow_back</i>
+  </button>
 </div>
 `;
     if(ulogin == "false") {SidePanel.show(htmlNotLoggedIn);}
     else {SidePanel.show(htmlIdea);}
+    M.updateTextFields();
 };
 
 export { show };

@@ -2,13 +2,11 @@
 
 function sendLogin() {
             if(!document.forms.login_form.email.checkValidity()) {
-                document.getElementById("error_mail").innerHTML = "Can&#39t be empty";
-                document.getElementById("email").style.background = "#ff6666";
+                document.getElementById("email").className += " invalid";
                 return false;
             }
             if(!document.forms.login_form.password.checkValidity()) {
-                document.getElementById("error_password").innerHTML = "Can&#39t be empty";
-                document.getElementById("password").style.background = "#ff6666";
+                document.getElementById("password").className += " invalid";
                 return false;
             }
             var xhttp = new XMLHttpRequest();
@@ -17,10 +15,8 @@ function sendLogin() {
                     var obj = JSON.parse(this.responseText);
                     if(obj.hasOwnProperty("message")) {
                         document.getElementById("error_server").innerHTML = obj.message;
-                        //alert(obj.message);
                     }
                     else {
-                        //alert("welcome " + obj + "!");
                         myLogin(obj);
                         SidePanel.hide();
                     }
@@ -32,53 +28,61 @@ function sendLogin() {
 export { sendLogin };
 
 function showLogin() {
-        var html =
-            `
+    var html = `
 <div style="overflow-y: auto;flex-grow: 1;">
-    <form method="POST" action="submitLogin" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded"  target="_blank" name="login_form">
-    <fieldset>
-        <legend>Login</legend>
-        <label for="email">E-mail address or username:</label><br>
-        <input id="email" name="email" placeholder="example@provider.com" required>
-        <span id="error_mail"></span><br>
-        <br>
-        <label for="password" required>Password:</label><br>
-        <input type="password" id="password" name="password">
-        <span id="error_password"></span><br><br>
-        <div id="error_server"></div>
-        <br><br>
-        <input type="button" class="oi-overlay-button" onclick='SideLoginRegister.sendLogin()' value="Login"/>
-    </fieldset>
+  <div class="row">
+    <form class="col s12" name="login_form">
+      <div class="row">
+<h6>Login</h6>
+      </div>
+      <div class="row">
+        <div class="input-field col s10">
+          <input id="email" type="text" name="email" class="validate" required/>
+          <label for="email">E-mail address or username</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s10">
+          <input id="password" type="password" name="password" class="validate" required/>
+          <label for="password">Password</label>
+            <div id="error_server"></div>
+        </div>
+      </div>
+      <div class="row">
+<button class="btn waves-effect waves-light oi-custom-greys" type="button" name="action" onclick='SideLoginRegister.sendLogin()'>Login
+    <i class="material-icons right">send</i>
+  </button>
+      </div>
     </form>
+  </div>
 </div>
 <div style="flex-grow: 0;">
-    <input type="button" onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Back"/>
+<button class="btn waves-effect waves-light oi-custom-greys oi-side-button-width" type="button" name="back" onclick='SidePanel.hide()'>Back <i class="material-icons left">arrow_back</i>
+  </button>
 </div>
-    `;
+`
     SidePanel.show(html);
     document.getElementById("password").addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             SideLoginRegister.sendLogin();
         }
     });
+    M.updateTextFields();
 };
 export { showLogin };
 
 
 function sendRegister() {
                 if(!document.forms.register_form.email.checkValidity()) {
-                    document.getElementById("error_mail").innerHTML = "Can&#39t be empty";
-                    document.getElementById("email").style.background = "#ff6666";
+                    document.getElementById("email").className += " invalid";
                     return false;
                 }
                 if(!document.forms.register_form.name.checkValidity()) {
-                    document.getElementById("error_name").innerHTML = "Can&#39t be empty";
-                    document.getElementById("name").style.background = "#ff6666";
+                    document.getElementById("name").className += " invalid";
                     return false;
                 }
                 if(!document.forms.register_form.password.checkValidity()) {
-                    document.getElementById("error_password").innerHTML = "Can&#39t be empty, min length=8";
-                    document.getElementById("password").style.background = "#ff6666";
+                    document.getElementById("password").className += " invalid";
                     return false;
                 }
                 var xhttp = new XMLHttpRequest();
@@ -88,11 +92,11 @@ function sendRegister() {
                         if(obj.hasOwnProperty("message")) {
                             if(obj.message.search("name") >= 1) {
                                 document.getElementById("error_name").innerHTML = "Username already in use.";
-                                document.getElementById("name").style.background = "#ff6666";
+                                document.getElementById("name").className += " invalid";
                             }
                             else if(obj.message.search("email") >= 1){
                                 document.getElementById("error_mail").innerHTML = "Email already in use.";
-                                document.getElementById("email").style.background = "#ff6666";
+                                document.getElementById("email").className += " invalid";
                             }
                             else alert(obj.message);
                         }
@@ -111,33 +115,51 @@ function showRegister() {
         var html =
     `
 <div style="overflow-y: auto;flex-grow: 1;">
-    <form method="POST" action="submitRegister" class="og-idea-contentInt" enctype="application/x-www-form-urlencoded"  target="_blank" name="register_form">
-        <fieldset>
-            <legend>Register</legend>
-            <label for="email">E-mail address:</label><br>
-            <input type="email" id="email" name="email" placeholder="example@provider.com" required>
-            <span id="error_mail"></span><br>
-            <label for="name">Username:</label><br>
-            <input type="text" id="name" name="name" placeholder="Fred Feuerstein" required>
-            <span id="error_name"></span><br>
-            <label for="password">Password:</label><br>
-            <input type="password" title="min length: 8" id="password" name="password" placeholder="************" pattern=".{8,}" required>
-            <span id="error_password"></span><br><br>
-            <input type="button" class="oi-overlay-button" onclick='SideLoginRegister.sendRegister();' value="Register"/>
-        </fieldset>
-		</form>
+    <div class="row">
+        <form class="col s12" name="register_form">
+            <div class="row">
+                <h6>Register</h6>
+            </div>
+            <div class="row">
+                <div class="input-field col s10">
+                    <input id="email" type="email" name="email" class="validate" required />
+                    <label for="email">E-mail address</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s10">
+                    <input id="name" type="text" name="name" class="validate" required />
+                    <label for="name">Username</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s10">
+                    <input id="password" type="password" name="password" class="validate" pattern=".{8,}" required />
+                    <label for="password">Password</label>
+                    <span class="helper-text" data-error="Can't be empty - at least 8 characters" data-success="">Min 8 characters</span>
+                    <div id="error_server"></div>
+                </div>
+            </div>
+            <div class="row">
+                <button class="btn waves-effect waves-light oi-custom-greys" type="button" name="action" onclick='SideLoginRegister.sendLogin()'>Register
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 <div style="flex-grow: 0;">
-    <input type="button" onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" value="Back"/> </div>
+    <button class="btn waves-effect waves-light oi-custom-greys oi-side-button-width" type="button" name="back" onclick='SidePanel.hide()'>Back <i class="material-icons left">arrow_back</i>
+    </button>
 </div>
-    `;
+</div>    `;
     SidePanel.show(html);
     document.getElementById("password").addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             SideLoginRegister.sendRegister();
         }
     });
-
+    M.updateTextFields();
 };
 
 export { showRegister };

@@ -7,40 +7,44 @@
     <meta name="author" content="Jannis Dohm"><!-- based on openglobus.org -->
     <meta charset="UTF-8">
     <link rel="icon" type="image/svg+xml" href="./media/favicon.svg">
-    <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
     <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+    <link rel="stylesheet" href="./materialize-css/dist/css/materialize.css" type="text/css">
+    <link rel="stylesheet" href="./css/oi.css">
+    <script src="./materialize-css/dist/js/materialize.js"></script>
+    <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
 </head>
 
 <body>
     <div style="display: flex; flex-direction: column; align-content: space-between; flex-wrap: wrap; width: 100%; height: 100%;">
         <div id="earth" style="width:100%;height:100%">
             <div style="position: absolute; top: 12px; right: 12px;">
-                <input type="button" id="btnLogin" class="oi-overlay-button" value="Login"/>
-                <input type="button" id="btnRegister" class="oi-overlay-button" value="Register"/>
-                <input type="button" id="btnLogout" class="oi-overlay-button" style="display: none" value="Logout"/>
+                <input type="button" id="btnLogin" class="oi-overlay-button oi-button" value="Login"/>
+                <input type="button" id="btnRegister" class="oi-overlay-button oi-button" value="Register"/>
+                <input type="button" id="btnLogout" class="oi-overlay-button oi-button" style="display: none" value="Logout"/>
             </div>
             <div style="position: absolute; bottom: 193px; right: 12px;" alt="info" id="info-btn" class="oi-info-button" onclick='SideShowIdea.show(108);'></div>
         </div>
         <div id="idea" style="display: flex; flex: auto; flex-direction: column; height:100%; padding: 0 0px;"></div><!-- flex-direction:column; -->
     </div>
     <script type="module">
-        'use strict';
+    'use strict';
 
-        import { Globe } from './src/og/Globe.js';
-        import { GlobusTerrain } from './src/og/terrain/GlobusTerrain.js';
-        import { XYZ } from './src/og/layer/XYZ.js';
-        import { WMS } from './src/og/layer/WMS.js';
-        import { Vector } from './src/og/layer/Vector.js';
-        import { Vec2 } from './src/og/math/Vec2.js';
-        import { Vec3 } from './src/og/math/Vec3.js';
-        import { Entity } from './src/og/entity/Entity.js';
-        import { LonLat } from './src/og/LonLat.js';
-        import { SkyBox } from './src/og/scene/SkyBox.js';
-        import { Quat } from './src/og/math/Quat.js';
-        import * as SideIdea from './src/og/SideIdea.js';
-        import * as SideShowIdea from './src/og/SideShowIdea.js';
-        import * as SidePanel from './src/og/SidePanel.js';
-        import * as SideLoginRegister from './src/og/SideLoginRegister.js';
+    import { Globe } from './src/og/Globe.js';
+    import { GlobusTerrain } from './src/og/terrain/GlobusTerrain.js';
+    import { XYZ } from './src/og/layer/XYZ.js';
+    import { WMS } from './src/og/layer/WMS.js';
+    import { Vector } from './src/og/layer/Vector.js';
+    import { Vec2 } from './src/og/math/Vec2.js';
+    import { Vec3 } from './src/og/math/Vec3.js';
+    import { Entity } from './src/og/entity/Entity.js';
+    import { LonLat } from './src/og/LonLat.js';
+    import { SkyBox } from './src/og/scene/SkyBox.js';
+    import { Quat } from './src/og/math/Quat.js';
+    import * as DrawIdeas from './src/oi/DrawIdeas.js';
+    import * as SideIdea from './src/og/SideIdea.js';
+    import * as SideShowIdea from './src/og/SideShowIdea.js';
+    import * as SidePanel from './src/og/SidePanel.js';
+    import * as SideLoginRegister from './src/og/SideLoginRegister.js';
 
      //variable to save if user is logged in 
      window.ulogin = "false";
@@ -49,44 +53,26 @@
      window.SideIdea = SideIdea;
      window.SideShowIdea = SideShowIdea;
      window.SideLoginRegister = SideLoginRegister;
+     window.DrawIdeas = DrawIdeas;
 
      window.addEventListener("pageshow", (e) => {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var obj = JSON.parse(this.responseText);
-                window.ulogin = this.getResponseHeader("login");
-                if(window.ulogin != "false") myLogin(window.ulogin);
-                for (var key in obj) {
-                    // skip loop if the property is from prototype
-                    if (!obj.hasOwnProperty(key)) continue;
-
-                    console.log('lon: ' + obj[key].lon + ' lat: ' + obj[key].lat + ' IdeaID: ' + obj[key].IdeaID);
-
-                    var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == obj[key].IdeaID);
-                    //if IdeaBeam with ID is missing create new IdeaBeam
-                    if(obj2  == undefined) {
-                        myCreateIdea(obj[key].lon, obj[key].lat, obj[key].IdeaID, obj[key].upvotes-obj[key].downvotes);
-                        console.log("created Idea " + pointLayer._entities[key].properties.name);
-                    }
-                }
-            }
-        };
-        xhttp.open("GET", "getIdeas", true);
-        xhttp.send();
-        //if link to Idea
+         DrawIdeas.draw(pointLayer);
+         //if link to Idea
          var urlParams = new URLSearchParams(window.location.search);
-         if(urlParams.has('Idea')) {
+         if (urlParams.has('Idea')) {
              SideShowIdea.show(urlParams.get('Idea'));
          }
      });
 
-        let pointLayer = new Vector("points", {
-            'async': false,
-            'polygonOffsetUnits': -100
-        });
+    let pointLayer = new Vector("points", {
+        'async': false,
+        'polygonOffsetUnits': -100
+    });
 
-	   window.myCreateIdea = function myCreateIdea(lon, lat, id, votes){
+	   window.myCreateIdea = function myCreateIdea(lon, lat, id, votes, tags, skills, users){
+         if(!skills) skills = [];
+         if(!tags) tags = [];
+         if(!users) users = [];
         if(votes > -50){
             var colorR = 1.0;
             var colorG = 1.0;
@@ -95,21 +81,26 @@
             if(votes >= 50)  colorR = 0;
             if(votes <= -50) colorG = 0;
             let size = Math.exp(-70/(votes+50))+0.3;
-            let qq = new Quat().setFromEulerAngles( -90+lat, 0, 0);
-            let qq2 = new Quat().setFromAxisAngle(new Vec3(0,1,0), -lon*Math.PI/180);
-            console.log("red: " + colorR + " green: " + colorG);
+            let rotX = new Quat().setFromEulerAngles( -90+lat, 0, 0);
+            let rotY = new Quat().setFromAxisAngle(new Vec3(0,1,0), -lon*Math.PI/180);
+            /* console.log("red: " + colorR + " green: " + colorG); */
             pointLayer.add(new Entity({
                 'name': id,
                 'lonlat': [lon, lat, size*100000*4],
                 'sphere': {
                     'radius': size*100000,
                     //rotate sphere to normal of globe
-                    'orientation': qq.mul(qq2),
+                    'orientation': rotX.mul(rotY),
                     "latBands": 3,
                     "lonBands": 200,
                     'scale': new Vec3(1.0,4.0,1.0),
                     'color': [colorR, colorG, 0.0, 1.0],
                     "src": "./svgTest/?IdeaID=" + id
+                },
+                'properties': {
+                    'tags': tags,
+                    'skills': skills,
+                    'user': users
                 }
             }));
         }
@@ -233,12 +224,7 @@
          }
      });
 
-        pointLayer.events.on("rclick", function(e){
-            //e.pickingObject.remove();
-        });
-
-
-        window.p = pointLayer;
+    window.p = pointLayer;
 
      window.myUpdateMarkPos = function myUpdateMarkPos(ll){
          var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == "mark");

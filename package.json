@@ -31,16 +31,17 @@
   "homepage": "http://www.openglobus.org",
   "dependencies": {
     "bcrypt": "^5.0.1",
-    "ejs": "^3.1.6",
     "express": "^4.17.1",
     "express-flash": "0.0.2",
     "express-session": "^1.17.1",
-    "matrix-js-sdk": "^9.8.0",
+    "material-design-icons": "^3.0.1",
+    "materialize-css": "^1.0.0",
+    "matrix-js-sdk": "^9.9.0",
     "method-override": "^3.0.0",
     "nodemon": "^2.0.7",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "sqlite3": "^5.0.1"
+    "sqlite3": "^5.0.2"
   },
   "exports": {
     ".": "./src/og/index.js",

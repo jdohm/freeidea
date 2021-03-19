@@ -1,0 +1,61 @@
+import { Entity } from './../og/entity/Entity.js';
+import { Vector } from './../og/layer/Vector.js';
+
+function draw(pointLayer, filter) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var obj = JSON.parse(this.responseText);
+            window.ulogin = this.getResponseHeader("login");
+            if(window.ulogin != "false") myLogin(window.ulogin);
+            for (var key in obj) {
+                // skip loop if the property is from prototype
+                if (!obj.hasOwnProperty(key)) continue;
+
+                var obj2 = pointLayer._entities.find(obj2 => obj2.properties.name == obj[key].IdeaID);
+                //if IdeaBeam with ID is missing create new IdeaBeam
+                if(obj2  == undefined) {
+                    myCreateIdea(obj[key].lon, obj[key].lat, obj[key].IdeaID, obj[key].upvotes-obj[key].downvotes, obj[key].tags, obj[key].skills, obj[key].users);
+                    // console.log("created Idea " + pointLayer._entities[key].properties.name);
+                }
+            }
+        }
+    };
+    xhttp.open("GET", "getIdeas", true);
+    xhttp.send();
+    }
+export{ draw }
+
+function filterIdeas(pointLayer, filter) {
+    //if filter is set check filter
+    if(filter !== null && filter.length !== 0) {
+        document.getElementById("filter-btn").classList.remove("oi-filter-button");
+        document.getElementById("filter-btn").classList.add("oi-filter-button-active");
+
+    //each entity gets checked
+    for (var key in pointLayer._entities){
+        // console.log(pointLayer._entities[key].id);
+        //check if tags property exists (to ignore mark and other non idea entities)
+        if(pointLayer._entities[key].properties.tags){
+            //hide idea
+            pointLayer._entities[key].setVisibility(false);
+            //check each filter value
+            for (var ke2 in filter){
+                //if tag includes filter value show entity
+                if(pointLayer._entities[key].properties.tags.includes(filter[ke2])){
+                    pointLayer._entities[key].setVisibility(true);
+                }
+            }
+        }
+     }}
+    else{
+        for (var key in pointLayer._entities){
+            if(pointLayer._entities[key].properties.tags)
+               pointLayer._entities[key].setVisibility(true);
+            document.getElementById("filter-btn").classList.remove("oi-filter-button-active");
+            document.getElementById("filter-btn").classList.add("oi-filter-button");
+        }
+    }
+}
+
+export{ filterIdeas }

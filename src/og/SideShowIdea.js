@@ -61,7 +61,7 @@ function show(IdeaID) {
     <div id="comment-section"></div>
 </div>
 <div style="flex-grow: 0;">
-    <H3 id="id_vote" style="margin-top: 5px;margin-bottom: 5px;">Vote this idea</H3>
+    <H6 id="id_vote" style="margin-top: 5px;margin-bottom: 5px;">Vote this idea</H6>
     <div style="display: flex;justify-content:center;">
         <img src="./media/up.svg" alt="Vote Up!" id="up-btn" style="max-height:15vh;max-width:49%;vertical-align: bottom;" onclick='
             var xhttp = new XMLHttpRequest();
@@ -78,8 +78,9 @@ function show(IdeaID) {
             SidePanel.hide();
             '>
     </div>
-    <input onclick="SideShowIdea.showSupport(${IdeaID})" style="width:33%; margin: 0% 0.5%;" type="button" value="Support request" class="oi-overlay-button" id="support-btn"/>
-    <input style="width:65%; margin: 0% 0.5%;" onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Back"/>
+<button class="btn waves-effect waves-light oi-custom-greys" style="width:65%; margin: 0% 0.5%;" type="button" name="back" onclick='SidePanel.hide();'>Back<i class="material-icons left">arrow_back</i>
+  </button><button class="btn waves-effect waves-light oi-custom-greys" style="width:33%; margin: 0% 0.5%;" type="button" name="back" onclick='SideShowIdea.showSupport(${IdeaID})'>Support request
+  </button>
 </div>
     `;
     SidePanel.show(html);
@@ -97,19 +98,26 @@ function showSupport(IdeaID){
         var html =
             `
 <div style="flex-grow: 0;">
-    <H2 id="id_title" style="display: inline-block;">Support Request</H2>
+    <H4 id="id_title" style="display: inline-block;">Support Request</H4>
 </div>
 <div style="overflow-y: auto;flex-grow: 1;">
-        <H2>Please describe your request</H2>
+        <H6>Please describe your request</H6>
         <p>consider logging in, to provide us the option to contact you.</p>
-        <textarea id="text" style="overflow:auto;" rows="6" cols="60" name="text" placeholder="report: reason \nupdated description: ... \nadd tag: ... \netc." required></textarea>
+      <div class="row">
+        <div class="input-field col s10">
+          <textarea id="text" type="text" name="text" class="materialize-textarea" placeholder="updated description, added tag, inappropriate..." required></textarea>
+          <label for="text">report: reason</label>
+        </div>
+      </div>
 </div>
 <div style="flex-grow: 0;">
-    <input onclick="SideShowIdea.sendSupportRequest(${IdeaID})" id="support-btn" class="oi-side-button" type="button" value="Submit request"/>
-    <input onclick="SidePanel.hide()" id="close-btn" class="oi-side-button" type="button" value="Cancel"/>
+<button class="btn waves-effect waves-light oi-custom-greys" style="width:33%; margin: 0% 0.5%;" type="button" name="back" onclick='myHideMark(); SidePanel.hide();'>Cancel<i class="material-icons left">arrow_back</i>
+  </button><button class="btn waves-effect waves-light oi-custom-greys" style="width:65%; margin: 0% 0.5%;" type="button" name="back" onclick='SideShowIdea.sendSupportRequest(${IdeaID})'>Submit Requst<i class="material-icons right">send</i>
+  </button>
 </div>
     `;
     SidePanel.show(html);
+    M.updateTextFields();
 }
 
 export { showSupport };

@@ -1,0 +1,119 @@
+.oi-custom-greys {
+    color: #AEAEAEFF!important;
+    background-color: #403b3bd9!important;
+}
+
+
+.oi-side-button-width {
+    width: calc(100% - 10px );
+}
+
+.oi-button {
+    transition: all 0.5s;
+    color: #AEAEAEFF;
+    border-radius: 2px;
+    border: none;
+    height: 40px;
+}
+
+
+input.oi-button {
+    padding: 5px 10px;
+}
+
+.oi-button:hover {
+    color: #FFFFFF;
+    box-shadow: 0 0 10px #474e52;
+}
+
+.oi-overlay-button {
+    font-family : inherit;
+    font-size: 1em;
+    float: left;
+    margin: 0px 5px;
+    background-color: #403b3bd9;
+    display: inline-block;
+    user-select: none;
+}
+
+.oi-info-button {
+    height: 40px;
+    width: 40px;
+    content:url(./../media/info.svg);
+}
+
+.oi-info-button:hover {
+    content:url(./../media/info_mo.svg);
+}
+
+.oi-filter-button {
+    transition: all 0.5s;
+    height: 40px;
+    width: 40px;
+    content:url(./../media/filter.svg);
+}
+
+.oi-filter-button:hover {
+    content:url(./../media/filter_mo.svg);
+    box-shadow: 0 0 10px #474e52;
+}
+
+.oi-filter-button-active {
+    height: 40px;
+    width: 40px;
+    content:url(./../media/filter_active.svg);
+}
+
+.oi-filter-button-active:hover {
+    content:url(./../media/filter_active_mo.svg);
+}
+
+.oi-link {
+    transition: all 0.5s;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.oi-link:hover {
+    border-radius: 3px;
+    box-shadow: 0 0 10px #474e52;
+}
+
+/* google Material Icons -- start*/
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://openidea.io/material-font/iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
+    src: local('Material Icons'),
+         local('MaterialIcons-Regular'),
+         url(https://openidea.io/material-font/iconfont/MaterialIcons-Regular.woff2) format('woff2'),
+         url(https://openidea.io/material-font/iconfont/MaterialIcons-Regular.woff) format('woff'),
+         url(https://openidea.io/material-font/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;  /* Preferred icon size */
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}/* google Material Icons -- end*/

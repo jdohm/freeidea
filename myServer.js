@@ -96,25 +96,72 @@ app.use(methodOverride('_method'));
 //app start page
 app.get("/", checkAuthenticated, function (req, res) {
     if(req.session.isNew) res.redirect('/?Idea=108');
-  try {
-  console.log("website username:" + req.user.name + "");
-  } catch (error) {
-  console.log("website no user logedin");
-  }
-  res.sendFile(path.join(__dirname + "/index.html"));
+    else {
+        try {
+        console.log("website username:" + req.user.name + "");
+        } catch (error) {
+        console.log("website no user logedin");
+        }
+        res.sendFile(path.join(__dirname + "/index.html"));
+    }
+});
 });
 
 //respond to getIdeas GET request
-app.get("/getIdeas", checkAuthenticated, function (req, res) {
-  //read all places from Database
-  db.serialize(function () {
-    let sql = `SELECT lon, lat, IdeaID, upvotes, downvotes FROM v_PlacesVotes ORDER BY lat`;
-    db.all(sql, [], (err, rows) => {
-      if (err) throw err;
-      res.json(rows);
+app.get("/getIdeas", checkAuthenticated, function(req, res) {
+    //read all places from Database
+    var idearows;
+    db.serialize(function() {
+        let sql = `SELECT lon, lat, IdeaID, upvotes, downvotes FROM v_PlacesVotes ORDER BY lat`;
+        db.all(sql, [], async (err, rows) => {
+            if (err) throw err;
+            idearows = rows;
+            for (var key in idearows) {
+                let tmp = await addTagsSkillsUsers(idearows[key].IdeaID);
+                idearows[key].tags = tmp.tags;
+                idearows[key].skills = tmp.skills;
+                idearows[key].user = tmp.user;
+            };
+          res.json(idearows);
+        });
     });
-  });
 });
+
+function addTagsSkillsUsers(id) {
+    var idearows = {tags: [], skills: [], user: []};
+    return new Promise((resolve) => {
+        db.serialize(function() {
+            let sql = `SELECT Tag FROM Idea_Tags WHERE Idea is ?`;
+            db.all(sql, [id], (err, rows) => {
+                if (err) throw err;
+                var tags = [];
+                rows.forEach((row) => {
+                    tags.push(row.Tag);
+                });
+                idearows.tags = tags;
+                let sql = `SELECT Skill FROM Idea_Skills WHERE Idea is ?`;
+                db.all(sql, [id], (err, rows) => {
+                    if (err) throw err;
+                    var skills = [];
+                    rows.forEach((row) => {
+                        skills.push(row.Skill);
+                    });
+                    idearows.skills = skills;
+                    let sql = `SELECT User FROM Idea_User WHERE Idea is ?`;
+                    db.all(sql, [id], (err, rows) => {
+                        if (err) throw err;
+                        var users = [];
+                        rows.forEach((row) => {
+                            users.push(row.User);
+                        });
+                        idearows.user = users;
+                        resolve(idearows);
+                    });
+                });
+            });
+        });
+    });
+};
 
 //get svgs
 app.get("/svgTest", function(req,res) {
@@ -454,6 +501,8 @@ app.use("/src", express.static(path.join(__dirname, "src")));
 app.use("/css", express.static(path.join(__dirname, "css")));
 app.use("/media", express.static(path.join(__dirname, "media")));
 app.use("/res", express.static(path.join(__dirname, "res")));
+app.use("/material-font", express.static(path.join(__dirname, "node_modules/material-design-icons")));
+app.use("/materialize-css", express.static(path.join(__dirname, "node_modules/materialize-css")));
 
 //check if user is not authentcated
 function checkNotAuthenticated(req, res, next) {
