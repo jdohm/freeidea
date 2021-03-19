@@ -8,24 +8,50 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/svg+xml" href="./media/favicon.svg">
     <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+    <link rel="stylesheet" href="./autoComplete/dist/css/autoComplete.css" type="text/css">
     <link rel="stylesheet" href="./materialize-css/dist/css/materialize.css" type="text/css">
     <link rel="stylesheet" href="./css/oi.css">
     <script src="./materialize-css/dist/js/materialize.js"></script>
     <script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+    <script src="./autoComplete/dist/js/autoComplete.js"></script>
 </head>
 
 <body>
-    <div style="display: flex; flex-direction: column; align-content: space-between; flex-wrap: wrap; width: 100%; height: 100%;">
-        <div id="earth" style="width:100%;height:100%">
-            <div style="position: absolute; top: 12px; right: 12px;">
-                <input type="button" id="btnLogin" class="oi-overlay-button oi-button" value="Login"/>
-                <input type="button" id="btnRegister" class="oi-overlay-button oi-button" value="Register"/>
-                <input type="button" id="btnLogout" class="oi-overlay-button oi-button" style="display: none" value="Logout"/>
+    <div style="display: flex; flex-direction: column; align-content: space-between; flex-wrap: wrap; width: 100%; height: 100%; overflow-x: hidden;">
+        <div id="earth" style="width:100%;height:100%;">
+            <div style="position: absolute; top: 12px; right: 7px;">
+                <input type="button" id="btnLogin" class="oi-overlay-button oi-button" value="Login" />
+                <input type="button" id="btnRegister" class="oi-overlay-button oi-button" value="Register" />
+                <input type="button" id="btnLogout" class="oi-overlay-button oi-button" style="display: none" value="Logout" />
             </div>
-            <div style="position: absolute; bottom: 193px; right: 12px;" alt="info" id="info-btn" class="oi-info-button" onclick='SideShowIdea.show(108);'></div>
+            <div style="position: absolute; bottom: 193px; right: 12px;" alt="info" id="info-btn" class="oi-info-button oi-button" onclick='SideShowIdea.show(108);'></div>
+
+            <div style="position: absolute; top: 12px; left: 12px;">
+                <label for="tag" class="hide">
+                    <select id="tag" class="hide" multiple="multiple"></select>
+                </label>
+                <form style="transition: all 2s;" id="filterMain" href="#">
+                    <input type="text" id="tag_query" style="display: inline-block; width: 0px; transition: all 2s; height: 34px; border-radius: 5px; max-width: 40%; background-color: #403b3bd9; color: #AEAEAEFF"></input>
+                    <div style="display: inline; margin-bottom: -13px; margin-left: -5px;" alt="filter" id="filter-btn" class="oi-filter-button oi-button"></div>
+                </form>
+
+                <div class="col s12">
+                    <div id="tag_chips"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col s12" id="tag_collection-wrapper">
+                        <ul class="hide grey lighten-5 tag-collection">
+                            <li><span>No result 😳</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div id="idea" style="display: flex; flex: auto; flex-direction: column; height:100%; padding: 0 0px;"></div><!-- flex-direction:column; -->
     </div>
+    <script src="./src/oi/filterTags.js"></script>
     <script type="module">
     'use strict';
 

@@ -527,6 +527,7 @@ app.use("/media", express.static(path.join(__dirname, "media")));
 app.use("/res", express.static(path.join(__dirname, "res")));
 app.use("/material-font", express.static(path.join(__dirname, "node_modules/material-design-icons")));
 app.use("/materialize-css", express.static(path.join(__dirname, "node_modules/materialize-css")));
+app.use("/autoComplete", express.static(path.join(__dirname, "node_modules/@tarekraafat/autocomplete.js")));
 
 //check if user is not authentcated
 function checkNotAuthenticated(req, res, next) {

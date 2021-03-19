@@ -30,6 +30,7 @@
   },
   "homepage": "http://www.openglobus.org",
   "dependencies": {
+    "@tarekraafat/autocomplete.js": "^8.3.2",
     "bcrypt": "^5.0.1",
     "express": "^4.17.1",
     "express-flash": "0.0.2",
