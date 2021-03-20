@@ -98,9 +98,9 @@ app.get("/", checkAuthenticated, function (req, res) {
     if(req.session.isNew) res.redirect('/?Idea=108');
     else {
         try {
-        console.log("website username:" + req.user.name + "");
+        console.log(req.user.name + " visited us");
         } catch (error) {
-        console.log("website no user logedin");
+        console.log("anonymous visitor visited us");
         }
         res.sendFile(path.join(__dirname + "/index.html"));
     }

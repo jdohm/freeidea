@@ -19,7 +19,7 @@ function save(lon, lat){
                 if(obj) {
                     if(obj == "error") alert("error - are you still logged in?");
                     else {
-                        myCreateIdea(lon,lat,obj,0);
+                        myCreateIdea( lon, lat, obj, 0, _tags, _skills, window.ulogin);
                         SidePanel.hide();
                         }
                     }
