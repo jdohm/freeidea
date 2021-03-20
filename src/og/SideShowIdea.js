@@ -48,7 +48,7 @@ function show(IdeaID) {
             `
 <div style="flex-grow: 0;">
     <H2 id="id_title" style="display: inline-block;margin-top: 0px;margin-bottom: 0px;"></H2>
-    <img src="./media/share.svg" alt="Share idea!" id="share-btn" style="height:1.5em;float: right" onclick='
+    <img src="./media/share.svg" alt="Share idea!" id="share-btn" style="position: absolute; height:1.5em; right: 5px; top: 5px;" onclick='
         navigator.clipboard.writeText("https://openidea.io/?Idea=" + ${IdeaID});
         alert("https://openidea.io/?Idea=" + ${IdeaID} + " is now in your clipboard, feel free to share");
         ' >
