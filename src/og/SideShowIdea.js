@@ -29,6 +29,11 @@ function show(IdeaID) {
                     });
                 //cactus chat end
                 document.getElementById("id_title").innerHTML = obj.TITLE;
+                document.getElementById("id_title").addEventListener('click', () => {
+                    document.getElementById("id_title").classList.add('hide');
+                    document.getElementById("id_title2").classList.remove('hide');
+                });
+                document.getElementById("id_title2").innerHTML = obj.TITLE;
                 document.getElementById("id_description").innerHTML = obj.DESCRIPTION;
                 document.getElementById("id_tags").innerHTML = "<span>Topics: </span> ";
                 obj.tags.forEach((dat) => {document.getElementById("id_tags").innerHTML += '<div class="og-tag-span">' + dat + '</div>';});
@@ -47,13 +52,14 @@ function show(IdeaID) {
         var html =
             `
 <div style="flex-grow: 0;">
-    <H2 id="id_title" style="display: inline-block;margin-top: 0px;margin-bottom: 0px;"></H2>
+    <H3 id="id_title" style="display: inline-block;margin-top: 0px;margin-bottom: 0px;"></H3>
     <img src="./media/share.svg" alt="Share idea!" id="share-btn" style="position: absolute; height:1.5em; right: 5px; top: 5px;" onclick='
         navigator.clipboard.writeText("https://openidea.io/?Idea=" + ${IdeaID});
         alert("https://openidea.io/?Idea=" + ${IdeaID} + " is now in your clipboard, feel free to share");
         ' >
 </div>
 <div style="overflow-y: auto;flex-grow: 1;">
+    <h6 id="id_title2" class="hide"></h6>
     <p id="id_description"></p>
     <div id="id_tags"></div>
     <div id="id_skills"></div>
