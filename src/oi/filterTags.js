@@ -23,33 +23,7 @@ document.getElementById('filterMain').addEventListener('focusout', () => {
 });
 
 
-let topics;
-
-const search = async query => {
-    if(!topics){
-        return topics = fetch(`./../getTopics/`)
-        .then(response => response.json())
-        .then(json => json.map(country => ({id: country.Name})))
-        .catch(_ => []);
-    } else return topics;
-};
-
-const generateOption = _ => {
-  const option = document.createElement('option');
-  option.value = _.id;
-    option.dataset.id = _.id;
-  return option;
-};
-
-const generateChip = _ => {
-  const chip = document.createElement('div');
-  chip.classList.add('chip');
-    chip.classList.add(`chip-${_.id}`);
-  chip.innerText = _.id;
-  return chip;
-};
-
-const generateIcon = _ => {
+const generateFilterIcon = _ => {
   const i = document.createElement('i');
   i.addEventListener('click', () => {
     Array.from(document.getElementById('tag').options).forEach(option => {
@@ -69,9 +43,6 @@ const generateIcon = _ => {
   return i;
 };
 
-const tag = document.getElementById('tag');
-const input = document.getElementById('tag_query');
-const chips = document.getElementById('tag_chips');
 var filterArray = [];
 
 new autoComplete({
@@ -79,7 +50,7 @@ new autoComplete({
     document.querySelector('.tag-collection').classList.remove('hide');
   },
   data: {
-    src: async () => search(input.value),
+      src: async () => search(document.getElementById('tag_query').value),
     key: ['id'],
     cache: false,
   },
@@ -97,14 +68,14 @@ new autoComplete({
 
     //generate chipt and display it
     const chip = generateChip(stringT);
-    chip.appendChild(generateIcon(stringT));
-    chips.appendChild(chip);
-    tag.add(generateOption(stringT));
+    chip.appendChild(generateFilterIcon(stringT));
+      document.getElementById('tag_chips').appendChild(chip);
+      document.getElementById('tag').add(generateOption(stringT));
       filterArray.push(stringT.id);
       DrawIdeas.filterIdeas(window.p, filterArray);
-      console.log(filterArray);
+      console.log("filtering for: " + filterArray);
 
-    input.value = '';
+      document.getElementById('tag_query').value = '';
   },
   resultsList: {
     render: true,
