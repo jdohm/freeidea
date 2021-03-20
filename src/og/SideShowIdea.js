@@ -62,25 +62,23 @@ function show(IdeaID) {
 </div>
 <div style="flex-grow: 0;">
     <H6 id="id_vote" style="margin-top: 5px;margin-bottom: 5px;">Vote this idea</H6>
-    <div style="display: flex;justify-content:center;">
-        <img src="./media/up.svg" alt="Vote Up!" id="up-btn" style="max-height:15vh;max-width:49%;vertical-align: bottom;" onclick='
+<button id="up-btn" class="btn waves-effect waves-light oi-custom-greys" style="width:49%; margin: 0% 0.5%; background-color: #43a047FF!important; color: #FFFFFFFF!important; margin-bottom: 1%;" type="button" name="back" onclick='
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", "submitVote", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.send("IdeaID="+${IdeaID}+"&upvote=1");
             SidePanel.hide();
-            '>
-        <img src="./media/down.svg" id="down-btn" alt="Vote Down" style="max-height:15vh;max-width:49%;vertical-align: bottom;" onclick='
+'>Vote Up<i class="material-icons right">thumb_up</i>
+  </button><button id="down-btn" class="btn waves-effect waves-light oi-custom-greys" style="width:49%; margin: 0% 0.5%; background-color: #e53935FF!important; color: #FFFFFFFF!important; margin-bottom: 1%;" type="button" name="back" onclick='
             var xhttp = new XMLHttpRequest();
             xhttp.open("POST", "submitVote", true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.send("IdeaID="+${IdeaID}+"&upvote=0");
             SidePanel.hide();
-            '>
-    </div>
+'>Vote Down<i class="material-icons right">thumb_down</i></button>
+
 <button class="btn waves-effect waves-light oi-custom-greys" style="width:65%; margin: 0% 0.5%;" type="button" name="back" onclick='SidePanel.hide();'>Back<i class="material-icons left">arrow_back</i>
-  </button><button class="btn waves-effect waves-light oi-custom-greys" style="width:33%; margin: 0% 0.5%;" type="button" name="back" onclick='SideShowIdea.showSupport(${IdeaID})'>Support request
-  </button>
+  </button><button class="btn waves-effect waves-light oi-custom-greys" style="width:33%; margin: 0% 0.5%;" type="button" name="back" onclick='SideShowIdea.showSupport(${IdeaID})'>Support request</button>
 </div>
     `;
     SidePanel.show(html);
