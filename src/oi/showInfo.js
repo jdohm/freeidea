@@ -36,8 +36,8 @@ function showInfo() {
     infoPanel.style.top = "50%";
     infoPanel.style.left = "50%";
     infoPanel.style.width = "600px";
-    infoPanel.style.maxHeight = "90%";
-    infoPanel.style.maxWidth = "80%";
+    infoPanel.style.maxHeight = "80%";
+    infoPanel.style.maxWidth = "100%";
     infoPanel.style.transform = "translate(-50%, -50%)";
 
     //back panel
