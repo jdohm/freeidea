@@ -67,6 +67,7 @@ function showInfo() {
                     backSubPanelInner.classList.remove('hide');
                     nextSubPanelInner.classList.remove('hide');
                 };
+                middleDescriptionSubPanel.scrollTop = 0;
             });
         backSubPanel.appendChild(backSubPanelInner);
     infoPanel.appendChild(backSubPanel);
@@ -138,6 +139,7 @@ function showInfo() {
                     backSubPanelInner.classList.remove('hide');
                     nextSubPanelInner.classList.add('hide');
                 };
+                middleDescriptionSubPanel.scrollTop = 0;
             });
         nextSubPanel.appendChild(nextSubPanelInner);
     infoPanel.appendChild(nextSubPanel);
