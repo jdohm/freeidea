@@ -95,7 +95,10 @@ app.use(methodOverride('_method'));
 
 //app start page
 app.get("/", checkAuthenticated, function (req, res) {
-    if(req.session.isNew) res.redirect('/?Idea=108');
+    if(req.session.isNew) {
+        if(req.query.Idea) res.redirect('/?user=new&Idea='+req.query.Idea);
+        else res.redirect('/?user=new');
+    }
     else {
         try {
         console.log(req.user.name + " visited us");

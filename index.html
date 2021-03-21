@@ -17,14 +17,14 @@
 </head>
 
 <body style="overflow: hidden;">
-    <div style="display: flex; flex-direction: column; align-content: space-between; flex-wrap: wrap; width: 100%; height: 100%; overflow: hidden;">
+    <div id="main" style="display: flex; flex-direction: column; align-content: space-between; flex-wrap: wrap; width: 100%; height: 100%; overflow: hidden;">
         <div id="earth" style="width:100%;height:100%;">
             <div style="position: absolute; top: 12px; right: 7px;">
                 <input type="button" id="btnLogin" class="oi-overlay-button oi-button" value="Login" />
                 <input type="button" id="btnRegister" class="oi-overlay-button oi-button" value="Register" />
                 <input type="button" id="btnLogout" class="oi-overlay-button oi-button" style="display: none" value="Logout" />
             </div>
-            <div style="position: absolute; bottom: 193px; right: 12px;" alt="info" id="info-btn" class="oi-info-button oi-button" onclick='SideShowIdea.show(108);'></div>
+            <div style="position: absolute; bottom: 193px; right: 12px;" alt="info" id="info-btn" class="oi-info-button oi-button" onclick='showInfo();'></div>
 
             <div style="position: absolute; top: 12px; left: 12px;">
                 <label for="tag" class="hide">
@@ -67,6 +67,7 @@
     import { LonLat } from './src/og/LonLat.js';
     import { SkyBox } from './src/og/scene/SkyBox.js';
     import { Quat } from './src/og/math/Quat.js';
+    import { showInfo } from './src/oi/showInfo.js';
     import * as DrawIdeas from './src/oi/DrawIdeas.js';
     import * as SideIdea from './src/og/SideIdea.js';
     import * as SideShowIdea from './src/og/SideShowIdea.js';
@@ -81,6 +82,7 @@
      window.SideShowIdea = SideShowIdea;
      window.SideLoginRegister = SideLoginRegister;
      window.DrawIdeas = DrawIdeas;
+     window.showInfo = showInfo;
 
      window.addEventListener("pageshow", (e) => {
          DrawIdeas.draw(pointLayer);
@@ -88,6 +90,9 @@
          var urlParams = new URLSearchParams(window.location.search);
          if (urlParams.has('Idea')) {
              SideShowIdea.show(urlParams.get('Idea'));
+         }
+         if (urlParams.has('user')) {
+             showInfo();
          }
      });
 
