@@ -5,7 +5,7 @@ Please keep in mind, this is a fresh idea itself, so expect some changes along t
 `;
 let htmlSearch = `Find ideas you like.</br>
 You can browse the globe and click on any idea that looks promising. If you like you can also use the filter in the top left corner, to reduce the number of displayed ideas. You could for example only look for ideas associated with the topic Peace. </br>
-Once you find a idea you like, feel free to use the share button, like/dislike it and if you have something to say, leave a comment in below the idea.
+Once you find a idea you like, feel free to use the share button <div style="width: 24px; margin: 1px; content: url('./../../media/share.svg'); display: inline-block"></div>, like/dislike it and if you have something to say, leave a comment in below the idea.
 This is also the right place to offer your help and get in contact with others interested in this idea.
 If you want you can join the comment room inside <a href="https://element.io/">Element</a> or another chat app which supports matrix and read the comments inside your chat app. </br>
 Just in case you find something which doesn't belong here (like hate speech, racism, sexism, ...) feel free to report the idea straight away!
