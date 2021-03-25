@@ -80,7 +80,7 @@ class Strip {
 
         this._path = [];
 
-        this._pickingColor = new Uint8Array(4);
+        this._pickingColor = new Float32Array(4);
 
         this._gridSize = 1;
 
@@ -217,6 +217,7 @@ class Strip {
             gl.uniform3fv(shu.eyePositionLow, r.activeCamera.eyeLow);
 
             gl.uniform4fv(shu.uColor, this.color);
+            gl.uniform1f(shu.uOpacity, this._entity._entityCollection._fadingOpacity);
             gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesHighBuffer);
             gl.vertexAttribPointer(sha.aVertexPositionHigh, this._verticesHighBuffer.itemSize, gl.FLOAT, false, 0, 0);
             gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesLowBuffer);
@@ -249,6 +250,7 @@ class Strip {
 
             gl.uniform3fv(shu.eyePositionHigh, r.activeCamera.eyeHigh);
             gl.uniform3fv(shu.eyePositionLow, r.activeCamera.eyeLow);
+            gl.uniform1f(shu.uOpacity, this._entity._entityCollection._fadingOpacity != 0 ? 1 : 0);
 
             gl.uniform4fv(shu.uColor, this._pickingColor);
             gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesHighBuffer);
@@ -256,7 +258,7 @@ class Strip {
             gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesLowBuffer);
             gl.vertexAttribPointer(sha.aVertexPositionLow, this._verticesLowBuffer.itemSize, gl.FLOAT, false, 0, 0);
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
-            gl.drawElements(r.handler.gl.TRIANGLE_STRIP, this._indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(r.handler.gl.TRIANGLE_STRIP, this._indexBuffer.numItems, gl.UNSIGNED_INT, 0);
             gl.enable(gl.CULL_FACE);
         }
     }

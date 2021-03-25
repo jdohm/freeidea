@@ -22,6 +22,8 @@ const FONTINDEX_BUFFER = 9;
 const OUTLINE_BUFFER = 10;
 const OUTLINECOLOR_BUFFER = 11;
 
+window.uZ = -2.0;
+window.dZ = 0.1;
 /*
  * og.LabelHandler
  *
@@ -281,6 +283,7 @@ class LabelHandler extends BillboardHandler {
         gl.bindBuffer(gl.ARRAY_BUFFER, this._fontIndexBuffer);
         gl.vertexAttribPointer(sha.a_fontIndex, this._fontIndexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+        //
         // outline
         gl.bindBuffer(gl.ARRAY_BUFFER, this._outlineColorBuffer);
         gl.vertexAttribPointer(sha.a_rgba, this._outlineColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -288,17 +291,18 @@ class LabelHandler extends BillboardHandler {
         gl.bindBuffer(gl.ARRAY_BUFFER, this._outlineBuffer);
         gl.vertexAttribPointer(sha.a_outline, this._outlineBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-        gl.uniform1f(shu.uZ, 1.0);
+        gl.uniform1f(shu.uZ, window.uZ + window.dZ);
         gl.drawArrays(gl.TRIANGLES, 0, this._vertexBuffer.numItems);
 
-        // no outline
+        //
+        // nooutline
         gl.bindBuffer(gl.ARRAY_BUFFER, this._rgbaBuffer);
         gl.vertexAttribPointer(sha.a_rgba, this._rgbaBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._noOutlineBuffer);
         gl.vertexAttribPointer(sha.a_outline, this._noOutlineBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-        gl.uniform1f(shu.uZ, 0.0);
+        gl.uniform1f(shu.uZ, window.uZ);
         gl.drawArrays(gl.TRIANGLES, 0, this._vertexBuffer.numItems);
     }
 
@@ -874,6 +878,8 @@ class LabelHandler extends BillboardHandler {
     }
 
     setFontIndexArr(index, fontIndex) {
+
+        fontIndex = fontIndex;
 
         var i = index * 6 * this._maxLetters;
         var a = this._fontIndexArr;
