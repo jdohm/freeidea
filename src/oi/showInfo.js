@@ -1,6 +1,8 @@
 let InfoPage = 0;
 
-let htmlWelcome = `Welcome to OpenIdea</br> this an open idea exchange platform. </br> We like to think of it like an Wikipedia for ideas.</br></br> Where everyone can share their ideas, find ideas worth pursuing and find people to bring ideas to life. </br> Together we can make a the world a better place!</br></br> On the following Pages you will learn how to navigate this site. If you wan\'t to you can come back to this welcome screen at any time, click the <div style="width: 24px; margin: 1px; content: url('./../../media/info.svg'); display: inline-block"></div> button on the right.</br></br>
+let htmlWelcome = `Welcome to OpenIdea</br> this an open idea exchange platform. </br> We like to think of it like an Wikipedia for ideas.</br></br> Where everyone can share their ideas, find ideas worth pursuing and find people to bring ideas to life. </br> Together we can make a the world a better place!</br></br> On the following Pages you will learn how to navigate this site. If you wan\'t to you can come back to this welcome screen at any time, click the <div style="width: 24px; margin: 1px; content: url('./../../media/info.svg'); display: inline-block"></div> button on the right.</br>
+You can also watch the video introduction to OpenIdea on the video platform Odysee <a href="https://odysee.com/@jd-ohm:b/OpenIdea-Intro:f">OpenIdea introduction</a>.
+</br>
 Please keep in mind, this is a fresh idea itself, so expect some changes along the way. If you find problems feel free to let us know.
 `;
 let htmlSearch = `Find ideas you like.</br>
