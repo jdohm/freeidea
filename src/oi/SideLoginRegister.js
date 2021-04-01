@@ -128,7 +128,8 @@ function showRegister() {
             </div>
             <div class="row">
                 <div class="input-field col s10">
-                    <input id="name" type="text" name="name" class="validate" required />
+                    <input id="name" type="text" name="name" class="validate" pattern="[A-Za-z0-9 ]+" required />
+                    <span class="helper-text" data-error="Can't be empty - only a-z, A-Z, 0-9 and space" data-success=""></span>
                     <label for="name">Username</label>
                 </div>
             </div>
