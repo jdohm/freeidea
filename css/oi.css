@@ -156,3 +156,7 @@ input::placeholder {
     z-index: 1000;
     outline: none;
 }
+
+.cactus-editor {
+    display: none!important;
+}

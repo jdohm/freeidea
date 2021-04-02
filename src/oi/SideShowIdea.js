@@ -17,6 +17,8 @@ function show(IdeaID) {
                     document.getElementById("up-btn").onclick = function () {SideLoginRegister.showLogin();};
                     document.getElementById("down-btn").style.opacity = "0.4";
                     document.getElementById("down-btn").onclick = function () {SideLoginRegister.showLogin();};
+                    document.getElementById("commentForm").textContent = "Comments:";
+                    document.getElementById("commentForm").classList.add("cactus-comment");
                 }
 
                 //cactus chat
@@ -64,7 +66,23 @@ function show(IdeaID) {
     <div id="id_tags"></div>
     <div id="id_skills"></div>
     <div id="id_user"></div>
+
+    <div id="commentForm">
+<form class="col s12" name="comment_form">
+        <div class="input-field col s10"">
+          <input id="comment" type="text" name="comment" style="width: calc( 100% - 1.3rem - 2 * 36px );" required/>
+          <label for="comment">Comment</label>
+
+    <button class="btn waves-effect waves-light oi-custom-greys" type="button" onclick="SideShowIdea.sendComment(${IdeaID})">
+    <i class="material-icons mid">send</i>
+  </button>
+        </div>
+    </form>
+    </div>
+
     <div id="comment-section"></div>
+    <div id="join-room">Join this comment section on your favorit matrix chat app! </br><a href="https://matrix.to/#/#comments_openidea.io_Idea#${IdeaID}:cactus.chat" target="_blank">#comments_openidea.io_Idea#<span style=\"display: inline-block; width: 0px;\"></span>${IdeaID}:cactus.chat</a></div>
+
 </div>
 <div style="flex-grow: 0;">
     <H6 id="id_vote" style="margin-top: 5px;margin-bottom: 5px;">Vote this idea</H6>
@@ -88,6 +106,13 @@ function show(IdeaID) {
 </div>
     `;
     SidePanel.show(html);
+    //send comment when hitting enter in comment field
+    document.getElementById('comment').addEventListener('keydown', (event) => {
+        if (event.code === 'Enter') {
+        event.preventDefault();
+        SideShowIdea.sendComment(IdeaID);
+        }
+    });
 
     var LoginRegister = `
     <a href="#" id="btnLogin" class="oi-link" onclick="SideLoginRegister.showLogin();">Login</a>
@@ -131,19 +156,41 @@ function sendSupportRequest(IdeaID){
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             alert(this.responseText);
-            // var obj = JSON.parse(this.responseText);
-            // if(obj) {
-            //     if(obj == "error") alert("error - are you still logged in?");
-            //     else {
-            //         myCreateIdea(lon,lat,obj,0);
-            //         SidePanel.hide();
-            //         }
-            //     }
+            SidePanel.hide();
         }};
-    var _testText = document.getElementById("text").value;
+    var _message = document.getElementById("text").value;
     xhttp.open("POST", "submitSupportRequest", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.send("text="+_testText+"&IdeaID="+IdeaID);
+    xhttp.send("text="+_message+"&IdeaID="+IdeaID);
 }
 
 export { sendSupportRequest };
+
+function sendComment(IdeaID) {
+            if(!document.forms.comment_form.comment.checkValidity()) {
+                return false;
+            }
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.forms.comment_form.comment.value = "";
+
+                    //cactus chat - update
+                    let comsec = document.getElementsByClassName("cactus-container");
+                    comsec[0].innerHTML = "";
+                    comsec[0].id = "comment-section";
+                    comsec[0].classList.remove("cactus-container");
+                    initComments({
+                            node: document.getElementById("comment-section"),
+                            defaultHomeserverUrl: "https://matrix.cactus.chat:8448",
+                            serverName: "cactus.chat",
+                            siteName: "openidea.io",
+                            commentSectionId: "Idea#" + IdeaID
+                        });
+                    //cactus chat end
+                }};
+            xhttp.open("POST", "submitComment", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("comment="+document.getElementById("comment").value+"&IdeaID="+IdeaID);
+};
+export { sendComment };
