@@ -9,7 +9,6 @@ const sqlite3 = require("sqlite3").verbose();
 const https = require("https");
 const path = require("path");
 const bcrypt = require("bcrypt");
-const sdk = require("matrix-js-sdk");
 const request = require("request");
 const passport = require("passport");
 const flash = require("express-flash");
@@ -22,17 +21,6 @@ const app = express();
 const http = express();
 const port = process.argv[2] || 80;
 const portSSL = process.argv[3] || 443;
-
-//matrix login
-const client = sdk.createClient("https://matrix.org");
-client
-  .login("m.login.password", {
-    user: "openidea",
-    password: process.env.MATRIX_PASSWORD,
-  })
-  .then((response) => {
-    console.log(response.access_token);
-});
 
 matrix.loginOpenIdea();
 
@@ -233,18 +221,13 @@ app.get("/svgTest", function (req, res) {
     });
 });
 
-//test matrix room joining and sending messages
-app.get("/submitMatrixTest", async function (req, res, next) {
-
-  //console.log(matrix.create(req.query.message));
-  // var matrixU = matrix.createUser("useruser");
-  // console.log(matrixU);
-
-    // matrix.createRoom(108);
-    // console.log(await matrix.sendMessage('useruser', 90, "just a first test", db));
-    console.log(await matrix.getLastMessages(90, 10));
-
-  res.send("test done");
+//endpoint for new comments
+app.post("/submitComment", checkAuthenticated, async function (req, res, next) {
+    if(res._headers.login !== "false") 
+      console.log(await matrix.sendMessage(res._headers.login, req.body.IdeaID, req.body.comment, db));
+    //elso only if we want to let people comment without login in!
+    //else console.log(await matrix.sendMessage('guest', req.body.IdeaID, req.body.comment, db));
+  res.json({msg: "comment saved"});
 });
 
 //respond to getIdea POST request
@@ -456,14 +439,6 @@ app.post("/submitIdea", checkAuthenticatedCancel, function (req, res) {
     /*****************************|
     |  mastodon part end          |
     |*****************************/
-
-    /**********************************|
-     * matrix part start               |
-    |**********************************/
-    matrix.createRoom(lastID, req.body.nameText);
-    /**********************************|
-     * matrix part end                 |
-    |**********************************/
         res.json(lastID);
       }
     );
@@ -472,28 +447,7 @@ app.post("/submitIdea", checkAuthenticatedCancel, function (req, res) {
 
 //support request to matrix room
 app.post("/submitSupportRequest", function (req, res, next) {
-    client.startClient();
-
-  var RoomId = "!HTcpkpXWLaaunauYsD:cactus.chat";
-
-    var content = {
-    body: "#" + req.body.IdeaID + "\n" + req.body.text + "\n\nsend from: ",
-    msgtype: "m.text",
-    };
-  if (req.user) {
-        content.body += req.user.email;
-  } else {
-    content.body += "anonymous";
-    }
-
-  client
-    .sendEvent(RoomId, "m.room.message", content, "")
-    .then((res) => {
-        // message sent successfully
-    })
-    .catch((err) => {
-        console.log(err);
-    });
+    matrix.sendSupportRequest(req);
     res.send("Message send to support");
 });
 
@@ -531,7 +485,7 @@ app.post("/submitRegister", async function (req, res) {
 
     //reject username if it uses not allowed character
     const regex = /[^A-Za-z0-9 ]+/g;
-    if(regex.search(req.body.name)) {
+    if(regex.test(req.body.name)) {
         res.json({message: "username not allowed"});
         return;
     }

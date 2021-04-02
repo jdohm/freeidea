@@ -142,7 +142,7 @@ function showRegister() {
                 </div>
             </div>
             <div class="row">
-                <button class="btn waves-effect waves-light oi-custom-greys" type="button" name="action" onclick='SideLoginRegister.sendLogin()'>Register
+                <button class="btn waves-effect waves-light oi-custom-greys" type="button" name="action" onclick='SideLoginRegister.sendRegister()'>Register
                     <i class="material-icons right">send</i>
                 </button>
             </div>
