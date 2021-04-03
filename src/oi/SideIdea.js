@@ -41,6 +41,9 @@ function show(ll) {
     var lon = ll.lon;
     var lat = ll.lat;
 
+    tagsArray.length = 0;
+    skillsArray.length = 0;
+
         var htmlIdea =
     `
 <div style="overflow-y: auto;overflow-x: hidden;flex-grow: 1;">

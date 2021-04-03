@@ -30,13 +30,13 @@ function show(IdeaID) {
                         commentSectionId: "Idea#" + IdeaID
                     });
                 //cactus chat end
-                document.getElementById("id_title").innerHTML = obj.TITLE;
+                document.getElementById("id_title").innerHTML = obj.title;
                 document.getElementById("id_title").addEventListener('click', () => {
                     document.getElementById("id_title").classList.add('hide');
                     document.getElementById("id_title2").classList.remove('hide');
                 });
-                document.getElementById("id_title2").innerHTML = obj.TITLE;
-                document.getElementById("id_description").innerHTML = obj.DESCRIPTION;
+                document.getElementById("id_title2").innerHTML = obj.title;
+                document.getElementById("id_description").innerHTML = obj.description;
                 document.getElementById("id_tags").innerHTML = "<span>Topics: </span> ";
                 obj.tags.forEach((dat) => {document.getElementById("id_tags").innerHTML += '<div class="og-tag-span">' + dat + '</div>';});
                 document.getElementById("id_skills").innerHTML = "<span>Needed skills: </span> ";

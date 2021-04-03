@@ -9,40 +9,25 @@ const sqlite3 = require("sqlite3").verbose();
 const https = require("https");
 const path = require("path");
 const bcrypt = require("bcrypt");
-const request = require("request");
 const passport = require("passport");
-const flash = require("express-flash");
 const session = require("express-session");
 const methodOverride = require("method-override");
 const matrix = require("./src/oi/matrix");
-// const db = require("./src/oi/sqliteDb");
+const db = require("./src/oi/sqliteDb");
 
 const app = express();
 const http = express();
 const port = process.argv[2] || 80;
 const portSSL = process.argv[3] || 443;
 
+//login matrix user
 matrix.loginOpenIdea();
+//connect to sqlite db
+db.connect();
 
 //usermanagement using passport
-const initializePassport = require("./passport-config");
-// initializePassport(passport, async db.getUserByEmail);
-initializePassport(passport, async function getUserByEmail(email) {
-  return new Promise((resolve) => {
-    let sql = `SELECT name, email, pwHash password FROM User WHERE email is ?`;
-    db.get(sql, [email], (err, rows) => {
-      if (err) throw err;
-        //if no user with this email was found, check if a username with this string exists
-        if (rows == null) {
-            sql = `SELECT name, email, pwHash password FROM User WHERE name is ?`;
-            db.get(sql, [email], (err, rows) => {
-                if (err) throw err;
-                resolve(rows);
-            });
-      } else resolve(rows);
-    });
-  });
-});
+const initializePassport = require("./src/oi/passport-config");
+initializePassport(passport, db.getUserByEmail);
 
 //options for https server
 var options = {
@@ -50,14 +35,6 @@ var options = {
   cert: fs.readFileSync("/etc/letsencrypt/live/freeidea.de/cert.pem"),
   ca: fs.readFileSync("/etc/letsencrypt/live/freeidea.de/chain.pem"),
 };
-
-// Start sqlite3 database connection
-let db = new sqlite3.Database("./db/Ideas.db", (err) => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log("Connected to the SQlite database.");
-});
 
 //make URL encoded data accessible inside get/post function
 app.use(
@@ -75,15 +52,15 @@ app.use(
 );
 
 app.use((req, res, next) => {
-    if (typeof req.session.isNew === "undefined") {
-        req.session.isNew = true;
-        req.session.save(next);
-    } else if (req.session.isNew) {
-        req.session.isNew = false;
-        req.session.save(next);
-    } else {
-        next();
-    }
+  if (typeof req.session.isNew === "undefined") {
+    req.session.isNew = true;
+    req.session.save(next);
+  } else if (req.session.isNew) {
+    req.session.isNew = false;
+    req.session.save(next);
+  } else {
+    next();
+  }
 });
 
 app.use(passport.initialize());
@@ -96,382 +73,117 @@ app.get("/", checkAuthenticated, function (req, res) {
     if (req.query.Idea) res.redirect("/?user=new&Idea=" + req.query.Idea);
     else res.redirect("/?user=new");
   } else {
-        try {
-        console.log(req.user.name + " visited us");
-        } catch (error) {
-        console.log("anonymous visitor visited us");
-        }
-        res.sendFile(path.join(__dirname + "/index.html"));
+    try {
+      console.log(req.user.name + " visited us");
+    } catch (error) {
+      console.log("anonymous visitor visited us");
     }
+    res.sendFile(path.join(__dirname + "/index.html"));
+  }
 });
 
 //respond with topics
-app.get("/getTopics", function (req, res) {
-    //read all topics from Database
-    db.serialize(function () {
-        let sql = `SELECT Name FROM Tags ORDER BY Name`;
-        db.all(sql, [], (err, rows) => {
-            if (err) throw err;
-            res.json(rows);
-        });
-    });
+app.get("/getTopics", async function (req, res) {
+  res.json(await db.getTopics());
 });
 
 //respond with needed skills
-app.get("/getSkills", function (req, res) {
-    //read all needed skills from Database
-    db.serialize(function () {
-        let sql = `SELECT Name FROM Skills ORDER BY Name`;
-        db.all(sql, [], (err, rows) => {
-            if (err) throw err;
-            res.json(rows);
-        });
-    });
+app.get("/getSkills", async function (req, res) {
+  res.json(await db.getSkills());
 });
 
 //respond to getIdeas GET request
-app.get("/getIdeas", checkAuthenticated, function (req, res) {
-    //read all places from Database
-    var idearows;
-  db.serialize(function () {
-        let sql = `SELECT lon, lat, IdeaID, upvotes, downvotes FROM v_PlacesVotes ORDER BY lat`;
-        db.all(sql, [], async (err, rows) => {
-            if (err) throw err;
-            idearows = rows;
-            for (var key in idearows) {
-                let tmp = await addTagsSkillsUsers(idearows[key].IdeaID);
-                idearows[key].tags = tmp.tags;
-                idearows[key].skills = tmp.skills;
-                idearows[key].user = tmp.user;
-      }
-          res.json(idearows);
-        });
-    });
+app.get("/getIdeas", checkAuthenticated, async function (req, res) {
+  res.json(await db.getIdeas());
 });
 
-function addTagsSkillsUsers(id) {
-  var idearows = { tags: [], skills: [], user: [] };
-    return new Promise((resolve) => {
-    db.serialize(function () {
-            let sql = `SELECT Tag FROM Idea_Tags WHERE Idea is ?`;
-            db.all(sql, [id], (err, rows) => {
-                if (err) throw err;
-                var tags = [];
-                rows.forEach((row) => {
-                    tags.push(row.Tag);
-                });
-                idearows.tags = tags;
-                let sql = `SELECT Skill FROM Idea_Skills WHERE Idea is ?`;
-                db.all(sql, [id], (err, rows) => {
-                    if (err) throw err;
-                    var skills = [];
-                    rows.forEach((row) => {
-                        skills.push(row.Skill);
-                    });
-                    idearows.skills = skills;
-                    let sql = `SELECT User FROM Idea_User WHERE Idea is ?`;
-                    db.all(sql, [id], (err, rows) => {
-                        if (err) throw err;
-                        var users = [];
-                        rows.forEach((row) => {
-                            users.push(row.User);
-                        });
-                        idearows.user = users;
-                        resolve(idearows);
-                    });
-                });
-            });
-        });
-    });
-}
-
 //get svgs
-app.get("/svgTest", function (req, res) {
-    let _id = req.query.IdeaID;
-    let _title = "";
-    db.serialize(function () {
-        let sql = `SELECT ID, title FROM Idea WHERE ID is ?`;
-        db.get(sql, [_id], (err, row) => {
-            if (err) throw err;
-      if (row) _title = row.title;
-            else _title = "title not found";
-            // console.log("test query " + _id + " title " + _title);
-            var testSVG = `
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-            xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-            width="300"
-            height="300"
-            viewBox="0 0 300 300"
-            version="1.1"
-        >
-        <rect width="300" height="300" fill="#FFFFFF"/>
-        <text x="000" y="200" fill="#000000" font-size="2.0em">#${_id}</text>
-        <text x="100" y="200" fill="#000000" font-size="2.0em">#${_id}</text>
-        <text x="200" y="200" fill="#000000" font-size="2.0em">#${_id}</text>
-        <text x="50" y="170" fill="#000000" transform="rotate(-90, 50, 170)" font-size="1.0em">${_title}</text>
-        <text x="150" y="170" fill="#000000" transform="rotate(-90, 150, 170)" font-size="1.0em">${_title}</text>
-        <text x="250" y="170" fill="#000000" transform="rotate(-90, 250, 170)" font-size="1.0em">${_title}</text>
-        </svg>
-    `;
-      res.type("svg");
-            res.send(testSVG);
-        });
-    });
+app.get("/svgTest", async function (req, res) {
+  let ideaData = await db.getIdea(req.query.IdeaID, true);
+  var SVG = `
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        width="300"
+        height="300"
+        viewBox="0 0 300 300"
+        version="1.1"
+    >
+    <rect width="300" height="300" fill="#FFFFFF"/>
+    <text x="000" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
+    <text x="100" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
+    <text x="200" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
+    <text x="050" y="170" fill="#000000" transform="rotate(-90, 050, 170)" font-size="1.0em">${ideaData.title}</text>
+    <text x="150" y="170" fill="#000000" transform="rotate(-90, 150, 170)" font-size="1.0em">${ideaData.title}</text>
+    <text x="250" y="170" fill="#000000" transform="rotate(-90, 250, 170)" font-size="1.0em">${ideaData.title}</text>
+    </svg>
+  `;
+  res.type("svg");
+  res.send(SVG);
 });
 
 //endpoint for new comments
 app.post("/submitComment", checkAuthenticated, async function (req, res, next) {
-    if(res._headers.login !== "false") 
-      console.log(await matrix.sendMessage(res._headers.login, req.body.IdeaID, req.body.comment, db));
-    //elso only if we want to let people comment without login in!
-    //else console.log(await matrix.sendMessage('guest', req.body.IdeaID, req.body.comment, db));
-  res.json({msg: "comment saved"});
+  if (res._headers.login !== "false")
+    console.log(
+      await matrix.sendMessage(
+        res._headers.login,
+        req.body.IdeaID,
+        req.body.comment,
+        db_old
+      )
+    );
+  //elso only if we want to let people comment without login in!
+  //else console.log(await matrix.sendMessage('guest', req.body.IdeaID, req.body.comment, db_old));
+  res.json({ msg: "comment saved" });
 });
 
 //respond to getIdea POST request
-app.post("/getIdea", checkAuthenticated, function (req, res) {
+app.post("/getIdea", checkAuthenticated, async function (req, res) {
   if (!req.body.IdeaID) res.json();
   else {
-    //Read idea data from database
-    db.serialize(function () {
-      let sql = `SELECT ID AskForIdea, title TITLE, description DESCRIPTION FROM Idea WHERE ID is ?`;
-      db.get(sql, [req.body.IdeaID], (err, rows) => {
-        if (err) throw err;
-        //if IdeaID was not found, cancel following
-        if (!rows) return 0;
-        var idearows = rows;
-        let sql = `SELECT Tag FROM Idea_Tags WHERE Idea is ?`;
-        db.all(sql, [req.body.IdeaID], (err, rows) => {
-          if (err) throw err;
-          var tags = [];
-          rows.forEach((row) => {
-            tags.push(row.Tag);
-          });
-          idearows.tags = tags;
-          let sql = `SELECT Skill FROM Idea_Skills WHERE Idea is ?`;
-          db.all(sql, [req.body.IdeaID], (err, rows) => {
-            if (err) throw err;
-            var crd = [];
-            rows.forEach((row) => {
-              crd.push(row.Skill);
-            });
-            idearows.skills = crd;
-              let sql = `SELECT User FROM Idea_User WHERE Idea is ?`;
-              db.all(sql, [req.body.IdeaID], (err, rows) => {
-                  if (err) throw err;
-                  var crd = [];
-                  rows.forEach((row) => {
-                      crd.push(row.User);
-                  });
-                  idearows.user = crd;
-                  res.json(idearows);
-              });
-          });
-        });
-      });
-    });
+    res.json(await db.getIdea(req.body.IdeaID));
   }
 });
 
 //receive votes from client and save them in db
-app.post("/submitVote", checkAuthenticatedCancel, function (req, res) {
-  db.serialize(function () {
-    let date_ob = new Date();
-    //datenow is date formated as string like this: YYYY-MM-DD HH:mm:ss
-    let datenow =
-      date_ob.getFullYear() +
-      "-" +
-      ("0" + (date_ob.getMonth() + 1)).slice(-2) +
-      "-" +
-      ("0" + date_ob.getDate()).slice(-2) +
-      " " +
-      ("0" + date_ob.getHours()).slice(-2) +
-      ":" +
-      ("0" + date_ob.getMinutes()).slice(-2) +
-      ":" +
-      ("0" + date_ob.getSeconds()).slice(-2);
-    db.run(
-      "INSERT INTO Votes(IdeaID,upvote,DateTime,User) VALUES(?1,?2,?3,?4)",
-      {
-          1: req.body.IdeaID,
-          2: req.body.upvote,
-          3: datenow,
-        4: req.user.name,
-      },
-      function (err) {
-        if (err) return console.log(err.message);
-        res.send("vote saved");
-      }
-    );
-  });
+app.post("/submitVote", checkAuthenticatedCancel, async function (req, res) {
+  res.send(await db.saveVote(req.body.IdeaID, req.body.upvote, req.user.name));
 });
 
 //receive new ideas from client and save them in db
-app.post("/submitIdea", checkAuthenticatedCancel, function (req, res) {
-  db.serialize(function () {
-    var lastID;
-    db.run(
-      "INSERT INTO Idea(title,description) VALUES(?1,?2)",
-      {
-        1: req.body.nameText,
-        2: req.body.ideaText,
-      },
-      function (err) {
-        if (err) return console.log(err.message);
-        lastID = this.lastID;
-        db.run(
-          "INSERT INTO Places(lon,lat,IdeaID) VALUES(?1,?2,?3)",
-          {
-            1: req.body.lon,
-            2: req.body.lat,
-            3: this.lastID,
-          },
-          function (err) {
-            if (err) return console.log(err.message);
-          }
-        );
-        var tags = req.body.tags.split(",");
-        tags.forEach(function (item, index) {
-          if (item.trim() != "") {
-          db.run(
-            "INSERT OR IGNORE INTO Tags(Name) VALUES(?1)",
-            {
-              1: item.trim(),
-            },
-            function (err) {
-              if (err) return console.log(err.message);
-              db.run(
-                "INSERT OR IGNORE INTO Idea_Tags(Idea,Tag) VALUES(?1, ?2)",
-                {
-                  1: lastID,
-                  2: item.trim(),
-                },
-                function (err) {
-                  if (err) return console.log(err.message);
-                }
-              );
-            }
-          );
-            }
-        });
-        var skills = req.body.skills.split(",");
-        skills.forEach(function (item, index) {
-          if (item.trim() != "") {
-          db.run(
-            "INSERT OR IGNORE INTO Skills(Name) VALUES(?1)",
-            {
-              1: item.trim(),
-            },
-            function (err) {
-              if (err) return console.log(err.message);
-              db.run(
-                "INSERT OR IGNORE INTO Idea_Skills(Idea,Skill) VALUES(?1, ?2)",
-                {
-                  1: lastID,
-                  2: item.trim(),
-                },
-                function (err) {
-                  if (err) return console.log(err.message);
-                }
-              );
-            }
-          );
-        }
-        });
-        db.run(
-            "INSERT INTO Idea_User(Idea, User, Role) VALUES(?1, ?2, ?3)",
-            {
-                1: lastID,
-                2: req.user.name,
-            3: 0,
-            },
-            function (err) {
-                if (err) return console.log(err.message);
-            }
-        );
-
-    /*****************************|
-    |  mastodon part start        |
-    |*****************************/
-        if (req.body.mastodon == "true") {
-              console.log("publish on mastodon: " + req.body.mastodon);
-          var tagsBody = "";
-
-          tags.some(function (item, index) {
-            if (item.trim() != "") {
-              tagsBody += "#" + item.trim() + " ";
-                  console.log("item: " + index + "tag: " + "#" + item.trim() + " ");
-              }
-              //if 3 tags written stop function
-            if (index >= 2) return true;
-              else return false;
-          });
-
-          console.log("tagsBody " + tagsBody);
-
-          var statusText = truncate(req.body.nameText + "\n" + req.body.ideaText, 425)
-              + "\n" + "https://openidea.io/?Idea=" + lastID + "\n"
-              + tagsBody;
-
-          var jsonBody = {
-            status: truncate(statusText, 425),
-            visibility: "unlisted",
-          }; // public, unlisted, private, direct
-          var clientServerOptions = {
-            url: "https://botsin.space/api/v1/statuses",
-              body: JSON.stringify(jsonBody),
-            method: "POST",
-              headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + process.env.MASTODON_ACCESS_TOKEN,
-            },
-          };
-          request(clientServerOptions, function (error, response, body) {
-              // console.log(body);
-          });
-
-          function truncate(str, n) {
-            return str.length > n ? str.substr(0, n - 3) + "..." : str;
-          }
-        }
-    /*****************************|
-    |  mastodon part end          |
-    |*****************************/
-        res.json(lastID);
-      }
-    );
-  });
+app.post("/submitIdea", checkAuthenticatedCancel, async function (req, res) {
+  res.json(await db.saveIdea(req));
 });
 
 //support request to matrix room
 app.post("/submitSupportRequest", function (req, res, next) {
-    matrix.sendSupportRequest(req);
-    res.send("Message send to support");
+  matrix.sendSupportRequest(req);
+  res.send("Message send to support");
 });
 
 //handle login POST request
 //app.post("/submitLogin", checkNotAuthenticated, passport.authenticate("local", (err, user, info) => {
 app.post("/submitLogin", function (req, res, next) {
-    passport.authenticate("local", (err, user, info) => {
-        //if authenticate failed respond with info
+  passport.authenticate("local", (_err, user, info) => {
+    //if authenticate failed respond with info
     if (!user) return res.json(info);
-        else {
-            //start user session
+    else {
+      //start user session
       req.logIn(user, function (err) {
         if (err) {
           return next(err);
         }
-                return res.json(user.name);
-            });
-        }
+        return res.json(user.name);
+      });
+    }
   })(req, res, next);
 });
 
 app.delete("/SubmitLogout", function (req, res) {
-    req.logOut();
-    res.json();
+  req.logOut();
+  res.json();
 });
 
 //handle register POST request
@@ -481,42 +193,25 @@ app.post("/submitRegister", async function (req, res) {
     res.json({
       email: req.user.email,
     });
-  } catch(e) {}
+  } catch (e) {}
 
-    //reject username if it uses not allowed character
-    const regex = /[^A-Za-z0-9 ]+/g;
-    if(regex.test(req.body.name)) {
-        res.json({message: "username not allowed"});
-        return;
-    }
+  //reject username if it uses not allowed character
+  const regex = /[^A-Za-z0-9 ]+/g;
+  if (regex.test(req.body.name)) {
+    res.json({ message: "username not allowed" });
+    return;
+  }
 
   console.log(req.body.name);
   console.log(req.body.email);
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    let hashedPassword = await bcrypt.hash(req.body.password, 10);
     console.log(hashedPassword);
-      const matrixUser = await matrix.createUser(req.body.name);
-    db.serialize(function () {
-      db.run(
-        "INSERT INTO User(name,email,pwHash,matrixname,matrixpw) VALUES(?1,?2,?3,?4,?5)",
-        {
-          1: req.body.name,
-          2: req.body.email,
-          3: hashedPassword,
-            4: matrixUser.matrixname,
-            5: matrixUser.matrixpw,
-        },
-        function (err) {
-            if (err) {
-                console.log(err.message);
-            res.json({ message: err.message });
-            }
-            res.json("success");
-        }
-      );
-    });
-  } catch(e) {
+    let matrixUser = await matrix.createUser(req.body.name);
+    res.json(await db.saveUser(req.body.name, req.body.email, hashedPassword, matrixUser));
+  } catch (e) {
     console.log("error while user registered");
+    res.json("error while user registered");
   }
 });
 
@@ -539,21 +234,23 @@ function checkNotAuthenticated(req, res, next) {
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    res.append('login', req.user.name);
+    res.append("login", req.user.name);
     console.log("checkAuthenticated " + req.user.name);
-  } else {res.append('login', false);}
+  } else {
+    res.append("login", false);
+  }
   next();
 }
 
 function checkAuthenticatedCancel(req, res, next) {
-    if (req.isAuthenticated()) {
+  if (req.isAuthenticated()) {
     res.append("login", req.user.name);
-        console.log("checkAuthenticated " + req.user.name);
-        next();
-    } else {
+    console.log("checkAuthenticated " + req.user.name);
+    next();
+  } else {
     res.append("login", false);
-        res.json("error");
-    }
+    res.json("error");
+  }
 }
 
 //http to https redirect
