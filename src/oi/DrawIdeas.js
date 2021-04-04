@@ -1,6 +1,17 @@
+/**
+ * @fileOverview this file provides functions to generate, filter and display ideas as entities
+ * @name DrawIdeas.js
+ * @author Jannis Dohm
+ * @license MIT
+ */
 import { Entity } from './../og/entity/Entity.js';
 import { Vector } from './../og/layer/Vector.js';
 
+/**
+ * function to create and display entities representing the ideas on the globe
+ * @param {Object} pointLayer - created entities will be added to this layer
+ * @param {string[]} [filter] - placeholder
+ */
 function draw(pointLayer, filter) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -26,6 +37,13 @@ function draw(pointLayer, filter) {
     }
 export{ draw }
 
+/**
+ * function to filter ideas, an empty filter will result in the display of all ideas.
+ * adding strings (tags) to the filter array will reduce the displayed ideas to these
+ *  matching one of the strings.
+ * @param {Object} pointLayer - containing the idea entities to be filtered
+ * @param {string[]} filter - array of strings which contain the filter keywords.
+ */
 function filterIdeas(pointLayer, filter) {
     //if filter is set check filter
     if(filter !== null && filter.length !== 0) {

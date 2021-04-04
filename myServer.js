@@ -14,6 +14,7 @@ const session = require("express-session");
 const methodOverride = require("method-override");
 const matrix = require("./src/oi/matrix");
 const db = require("./src/oi/sqliteDb");
+const svg = require("./src/oi/DrawSvg");
 
 const app = express();
 const http = express();
@@ -100,25 +101,7 @@ app.get("/getIdeas", checkAuthenticated, async function (req, res) {
 //get svgs
 app.get("/svgTest", async function (req, res) {
   let ideaData = await db.getIdea(req.query.IdeaID, true);
-  var SVG = `
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-        width="300"
-        height="300"
-        viewBox="0 0 300 300"
-        version="1.1"
-    >
-    <rect width="300" height="300" fill="#FFFFFF"/>
-    <text x="000" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
-    <text x="100" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
-    <text x="200" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
-    <text x="050" y="170" fill="#000000" transform="rotate(-90, 050, 170)" font-size="1.0em">${ideaData.title}</text>
-    <text x="150" y="170" fill="#000000" transform="rotate(-90, 150, 170)" font-size="1.0em">${ideaData.title}</text>
-    <text x="250" y="170" fill="#000000" transform="rotate(-90, 250, 170)" font-size="1.0em">${ideaData.title}</text>
-    </svg>
-  `;
+    let SVG = svg.draw(ideaData);
   res.type("svg");
   res.send(SVG);
 });

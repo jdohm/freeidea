@@ -1,3 +1,14 @@
+/**
+ * @fileOverview file which initiates the autocomplete.js to offer tag support
+ * for filtering/adding tags to ideas
+ * @name filterTags.js
+ * @author Jannis Dohm
+ * @license MIT
+ * this work is heavily based on the work of Sami Jnih  https://github.com/samijnih
+ * his work can be found here: https://github.com/TarekRaafat/autoComplete.js/issues/91#issuecomment-747089915
+ */
+
+//adds function to the filter icon
 document.getElementById('filterMain').onsubmit = function () {
     document.getElementById('tag_query').style.width = "0";
     document.getElementById('tag_query').style.borderLeft = "0px solid #9e9e9e";

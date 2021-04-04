@@ -1,10 +1,19 @@
+/**
+ * @fileOverview this file provides a info/welcome screen
+ * @name showInfo.js
+ * @author Jannis Dohm
+ * @license MIT
+ */
+//stores the selected page 
 let InfoPage = 0;
 
+//content of first page, basics about openidea
 let htmlWelcome = `Welcome to OpenIdea</br> this an open idea exchange platform. </br> We like to think of it like an Wikipedia for ideas.</br></br> Where everyone can share their ideas, find ideas worth pursuing and find people to bring ideas to life. </br> Together we can make a the world a better place!</br></br> On the following Pages you will learn how to navigate this site. If you wan\'t to you can come back to this welcome screen at any time, click the <div style="width: 24px; margin: 1px; content: url('./../../media/info.svg'); display: inline-block"></div> button on the right.</br>
 You can also watch the video introduction to OpenIdea on the video platform Odysee <a href="https://odysee.com/@jd-ohm:b/OpenIdea-Intro:f">OpenIdea introduction</a>.
 </br>
 Please keep in mind, this is a fresh idea itself, so expect some changes along the way. If you find problems feel free to let us know.
 `;
+//content of second page, searching for ideas on openidea
 let htmlSearch = `Find ideas you like.</br>
 You can browse the globe and click on any idea that looks promising. If you like you can also use the filter in the top left corner, to reduce the number of displayed ideas. You could for example only look for ideas associated with the topic Peace. </br>
 Once you find a idea you like, feel free to use the share button <div style="width: 24px; margin: 1px; content: url('./../../media/share.svg'); display: inline-block"></div>, like/dislike it and if you have something to say, leave a comment in below the idea.
@@ -12,7 +21,7 @@ This is also the right place to offer your help and get in contact with others i
 If you want you can join the comment room inside <a href="https://element.io/">Element</a> or another chat app which supports matrix and read the comments inside your chat app. </br>
 Just in case you find something which doesn't belong here (like hate speech, racism, sexism, ...) feel free to report the idea straight away!
 `;
-
+//content of third page, how to create your ideas on openidea
 let htmlCreate = `Create your own ideas.</br>
 If you want you can create your own ideas too.
 Please keep in mind, if you share them, they are out in the open, free for everyone to use. </br>
@@ -29,6 +38,9 @@ Now all that's left for you to do is: Share your idea with your friends and if y
 Enjoy!
 `;
 
+/**
+  * function to display welcome/info screen
+  */
 function showInfo() {
     const infoPanel = document.createElement('div');
     infoPanel.classList.add('infoPanel');
@@ -149,4 +161,3 @@ function showInfo() {
     document.getElementById('main').appendChild(infoPanel);
 }
 export { showInfo }
-

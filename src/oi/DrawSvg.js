@@ -1,48 +1,38 @@
+/**
+ * @fileOverview this file provides a svg which can be used as a texture for the idea entities
+ * @name DrawSvg.js
+ * @author Jannis Dohm
+ * @license MIT
+ */
 
-function draw(id){
-    var doc = document.implementation.createDocument("", "", null);
-
-    var svg = doc.createElement("svg");
-    svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    svg.setAttribute("xmlns:sodipodi", "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd");
-    svg.setAttribute("xmlns:inkscape", "http://www.inkscape.org/namespaces/inkscape");
-    svg.setAttribute("width", "150");
-    svg.setAttribute("height", "150");
-    svg.setAttribute("viewBox", "0 0 150 150");
-    svg.setAttribute("version", "1.1");
-
-    var newRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    newRect.setAttributeNS(null,"width", "150");
-    newRect.setAttributeNS(null,"height", "150");
-    newRect.setAttributeNS(null,"fill", "#FFFFFF");
-    svg.appendChild(newRect);
-
-    setID(svg,id);
-
-    svg.appendChild(setText({x:25, y:100, fill:'#000000', transform:'rotate(-90, 25,100)'}, "test"));
-    svg.appendChild(setText({x:75, y:100, fill:'#000000', transform:'rotate(-90, 75,100)'}, "test"));
-    svg.appendChild(setText({x:125, y:100, fill:'#000000', transform:'rotate(-90, 125,100)'}, "test"));
-
-    // return svg;
-    return testSVG;
+/**
+ * function to create and return svg
+ * @param {Object} ideaData
+ * @param {number} ideaData.ID - number of idea
+ * @param {string} ideaData.title - title of idea
+ */
+function draw(ideaData){
+    var SVG = `
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        width="300"
+        height="300"
+        viewBox="0 0 300 300"
+        version="1.1"
+    >
+    <rect width="300" height="300" fill="#FFFFFF"/>
+    <text x="000" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
+    <text x="100" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
+    <text x="200" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
+    <text x="050" y="170" fill="#000000" transform="rotate(-90, 050, 170)" font-size="1.0em">${ideaData.title}</text>
+    <text x="150" y="170" fill="#000000" transform="rotate(-90, 150, 170)" font-size="1.0em">${ideaData.title}</text>
+    <text x="250" y="170" fill="#000000" transform="rotate(-90, 250, 170)" font-size="1.0em">${ideaData.title}</text>
+    </svg>
+  `;
+    return SVG;
 }
-export {draw}
-
-
-
-function setID(svg, id) {
-    svg.appendChild(setText({x:0,   y:50, fill:'#000000'}, "#"+id));
-    svg.appendChild(setText({x:50,  y:50, fill:'#000000'}, "#"+id));
-    svg.appendChild(setText({x:100, y:50, fill:'#000000'}, "#"+id));
-}
-
-var svgNS = "http://www.w3.org/2000/svg";
-function setText(v, t) {
-    let elem = document.createElementNS("http://www.w3.org/2000/svg", 'text');
-    for (var p in v)
-        elem.setAttributeNS(null, p, v[p]);
-    elem.textContent = t;
-    return elem;
-}
-
-var testSVG = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="150" height="150" viewBox="0 0 150 150" version="1.1"> <rect width="150" height="150" fill="#FFFFFF"/> </svg>`
+module.exports = {
+    draw,
+};

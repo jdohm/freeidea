@@ -1,3 +1,12 @@
+/**
+ * @fileOverview file which initiates the autocomplete.js to offer tag support
+ * for filtering/adding tags to ideas
+ * @name autocomplete.js
+ * @author Jannis Dohm
+ * @license MIT
+ * this work is heavily based on the work of Sami Jnih  https://github.com/samijnih
+ * his work can be found here: https://github.com/TarekRaafat/autoComplete.js/issues/91#issuecomment-747089915
+ */
 let topics;
 
 const search = async query => {

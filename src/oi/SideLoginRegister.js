@@ -1,34 +1,49 @@
+/**
+ * @fileOverview this file provides function to display a login or register panel
+ * inside the side panel
+ * @name SideLoginRegister.js
+ * @author Jannis Dohm
+ * @license MIT
+ */
 'use strict';
 
+/**
+ * function to send login information to the server
+ * also displays errors and handles login on client side plus hides the panel on succes
+ * information will be read from login form
+ */
 function sendLogin() {
-            if(!document.forms.login_form.email.checkValidity()) {
-                document.getElementById("email").className += " invalid";
-                return false;
+    if (!document.forms.login_form.email.checkValidity()) {
+        document.getElementById("email").className += " invalid";
+        return false;
+    }
+    if (!document.forms.login_form.password.checkValidity()) {
+        document.getElementById("password").className += " invalid";
+        return false;
+    }
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let obj = JSON.parse(this.responseText);
+            if (obj.hasOwnProperty("message")) {
+                document.getElementById("error_server").innerHTML = obj.message;
+            } else {
+                myLogin(obj);
+                SidePanel.hide();
             }
-            if(!document.forms.login_form.password.checkValidity()) {
-                document.getElementById("password").className += " invalid";
-                return false;
-            }
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    var obj = JSON.parse(this.responseText);
-                    if(obj.hasOwnProperty("message")) {
-                        document.getElementById("error_server").innerHTML = obj.message;
-                    }
-                    else {
-                        myLogin(obj);
-                        SidePanel.hide();
-                    }
-                }};
-            xhttp.open("POST", "submitLogin", true);
-            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhttp.send("email="+document.getElementById("email").value+"&password="+document.getElementById("password").value);
+        }
+    };
+    xhttp.open("POST", "submitLogin", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("email=" + document.getElementById("email").value + "&password=" + document.getElementById("password").value);
 };
-export { sendLogin };
+export {sendLogin};
 
+/**
+ * function to show login form in side panel
+ */
 function showLogin() {
-    var html = `
+    let html = `
 <div style="overflow-y: auto;flex-grow: 1;">
   <div class="row">
     <form class="col s12" name="login_form">
@@ -62,58 +77,63 @@ function showLogin() {
 </div>
 `
     SidePanel.show(html);
-    document.getElementById("password").addEventListener('keypress', function (e) {
+    document.getElementById("password").addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             SideLoginRegister.sendLogin();
         }
     });
     M.updateTextFields();
 };
-export { showLogin };
+export {showLogin};
 
-
+/**
+ * function to send register information to the server
+ * also displays errors and hides the panel on succes
+ * information will be read from register form
+ */
 function sendRegister() {
-                if(!document.forms.register_form.email.checkValidity()) {
-                    document.getElementById("email").className += " invalid";
-                    return false;
-                }
-                if(!document.forms.register_form.name.checkValidity()) {
+    if (!document.forms.register_form.email.checkValidity()) {
+        document.getElementById("email").className += " invalid";
+        return false;
+    }
+    if (!document.forms.register_form.name.checkValidity()) {
+        document.getElementById("name").className += " invalid";
+        return false;
+    }
+    if (!document.forms.register_form.password.checkValidity()) {
+        document.getElementById("password").className += " invalid";
+        return false;
+    }
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            let obj = JSON.parse(this.responseText);
+            if (obj.hasOwnProperty("message")) {
+                if (obj.message.search("name") >= 1) {
+                    document.getElementById("error_name").innerHTML = "Username already in use.";
                     document.getElementById("name").className += " invalid";
-                    return false;
-                }
-                if(!document.forms.register_form.password.checkValidity()) {
-                    document.getElementById("password").className += " invalid";
-                    return false;
-                }
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        var obj = JSON.parse(this.responseText);
-                        if(obj.hasOwnProperty("message")) {
-                            if(obj.message.search("name") >= 1) {
-                                document.getElementById("error_name").innerHTML = "Username already in use.";
-                                document.getElementById("name").className += " invalid";
-                            }
-                            else if(obj.message.search("email") >= 1){
-                                document.getElementById("error_mail").innerHTML = "Email already in use.";
-                                document.getElementById("email").className += " invalid";
-                            }
-                            else alert(obj.message);
-                        }
-                        else {
-                            SidePanel.hide();
-                        }
-                    }};
-                xhttp.open("POST", "submitRegister", true);
-                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhttp.send("name="+document.getElementById("name").value+"&email="+document.getElementById("email").value+"&password="+document.getElementById("password").value);
+                } else if (obj.message.search("email") >= 1) {
+                    document.getElementById("error_mail").innerHTML = "Email already in use.";
+                    document.getElementById("email").className += " invalid";
+                } else alert(obj.message);
+            } else {
+                SidePanel.hide();
+            }
+        }
+    };
+    xhttp.open("POST", "submitRegister", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("name=" + document.getElementById("name").value + "&email=" + document.getElementById("email").value + "&password=" + document.getElementById("password").value);
 };
-export { sendRegister };
+export {sendRegister};
 
 
+/**
+ * function to show register form in side panel
+ */
 function showRegister() {
-        var html =
-    `
+    let html =
+        `
 <div style="overflow-y: auto;flex-grow: 1;">
     <div class="row">
         <form class="col s12" name="register_form">
@@ -155,12 +175,11 @@ function showRegister() {
 </div>
 </div>    `;
     SidePanel.show(html);
-    document.getElementById("password").addEventListener('keypress', function (e) {
+    document.getElementById("password").addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             SideLoginRegister.sendRegister();
         }
     });
     M.updateTextFields();
 };
-
-export { showRegister };
+export {showRegister};
