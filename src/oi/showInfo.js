@@ -8,15 +8,21 @@
 let InfoPage = 0;
 
 //content of first page, basics about openidea
-let htmlWelcome = `Welcome to OpenIdea</br> this an open idea exchange platform. </br> We like to think of it like an Wikipedia for ideas.</br></br> Where everyone can share their ideas, find ideas worth pursuing and find people to bring ideas to life. </br> Together we can make a the world a better place!</br></br> On the following Pages you will learn how to navigate this site. If you wan\'t to you can come back to this welcome screen at any time, click the <div style="width: 24px; margin: 1px; content: url('./../../media/info.svg'); display: inline-block"></div> button on the right.</br>
-You can also watch the video introduction to OpenIdea on the video platform Odysee <a href="https://odysee.com/@jd-ohm:b/OpenIdea-Intro:f">OpenIdea introduction</a>.
-</br>
-Please keep in mind, this is a fresh idea itself, so expect some changes along the way. If you find problems feel free to let us know.
+let htmlWelcome = `Welcome to OpenIdea</br>
+an open idea exchange platform. </br>
+Imagine it as a Wikipedia for ideas.</br></br>
+A place where everyone is able to create, share and collaborate on ideas.</br>
+Together we can make the world a better place!</br></br>
+On the following pages you will learn how to navigate this site.
+You can return to this welcome page anytime by pressing the <div style="width: 24px; margin: 1px; content: url('./../../media/info.svg'); display: inline-block"></div> button on the right.</br>
+Additionally, there is a video introduction on Odysee <a href="https://odysee.com/@jd-ohm:b/OpenIdea-Intro:f">OpenIdea introduction</a>.</br>
+As this is a new project, expect changes on this platform along the way.
+Please let us know if you have any suggestions or feedback.
 `;
 //content of second page, searching for ideas on openidea
 let htmlSearch = `Find ideas you like.</br>
 You can browse the globe and click on any idea that looks promising. If you like you can also use the filter in the top left corner, to reduce the number of displayed ideas. You could for example only look for ideas associated with the topic Peace. </br>
-Once you find a idea you like, feel free to use the share button <div style="width: 24px; margin: 1px; content: url('./../../media/share.svg'); display: inline-block"></div>, like/dislike it and if you have something to say, leave a comment in below the idea.
+Once you find a idea you like, feel free to use the share button <div style="width: 24px; margin: 1px; content: url('./../../media/share.svg'); display: inline-block"></div>, like/dislike it and if you have something to say, leave a comment below the idea.
 This is also the right place to offer your help and get in contact with others interested in this idea.
 If you want you can join the comment room inside <a href="https://element.io/">Element</a> or another chat app which supports matrix and read the comments inside your chat app. </br>
 Just in case you find something which doesn't belong here (like hate speech, racism, sexism, ...) feel free to report the idea straight away!
@@ -25,16 +31,19 @@ Just in case you find something which doesn't belong here (like hate speech, rac
 let htmlCreate = `Create your own ideas.</br>
 If you want you can create your own ideas too.
 Please keep in mind, if you share them, they are out in the open, free for everyone to use. </br>
-You do so by clicking on the globe, where ever you feel your idea belongs.
+You do so by clicking on the globe, wherever you feel your idea belongs.
 This could be a maker space near you, where you already started to work on this idea or a park you plan on cleaning.</br>
 The next step is to choose a good title. It should be descriptive but short (not more than a few words). </br>
 The description is the place, where you have the chance to get more specific and let others know all the details.
-This is also a good place to let others know, if you look for support and plan on working on this idea yourself, or if you leave it here for to build upon. </br>
-Topics get used to filter ideas, thus it is a good idea to associate relevant topics with your idea.</br>
-Needed skills, lets other know right from the beginning which skills are good to have to bring this idea to life.</br>
-After you created your idea, you can choose if you want to publish it on <a href="https://botsin.space/@OpenIdea">mastodon</a>, in case you check the button, after saving your idea it will automatically be published. </br>
+This is also a good place to let others know if you
+are planning to work on it yourself and look for support
+or just leave it here for others to build upon.</br>
+Topics are used to filter ideas, thus it is a good idea to associate relevant topics with your idea.</br>
+Needed skills, let others know which skills are needed to bring this idea to life.
+After you created your idea, choose if you want to publish it on <a href="https://botsin.space/@OpenIdea">mastodon</a>.</br>
+Finally save your idea and it will automatically be published on our site. Congratulations. </br>
 Once saved, you can stay up to date with your idea by visiting the comment section or even joining the comment section on a chat app like <a href="https://element.io/">Element</a>.</br>
-Now all that's left for you to do is: Share your idea with your friends and if you want, work on bringing your idea to life. </br>
+Now all that's left for you to do is: Share your idea with your friends and if you want, work on bringing your idea to life.
 Enjoy!
 `;
 
@@ -60,13 +69,13 @@ function showInfo() {
         backSubPanel.style.display = "flex";
         backSubPanel.style.flex = "none";
         backSubPanel.style.alignItems = "center";
+        backSubPanel.style.justifyContent = 'center';
         backSubPanel.style.width = "48";
         backSubPanel.style.color = "#AEAEAEFF";
         const backSubPanelInner = document.createElement('div');
-            backSubPanelInner.classList.add('material-icons');
             backSubPanelInner.classList.add('hide');
-            backSubPanelInner.innerText = 'keyboard_arrow_left';
-            backSubPanelInner.style.fontSize = '48px';
+            backSubPanelInner.style.content = "url(./../../media/left.svg)";
+            backSubPanelInner.style.width = '40px';
             backSubPanelInner.style.cursor = 'pointer';
             backSubPanelInner.addEventListener('click', () => {
                 if(InfoPage == 1) {
@@ -133,13 +142,13 @@ function showInfo() {
         nextSubPanel.classList.add('nextSubPanel');
         nextSubPanel.style.display = "flex";
         nextSubPanel.style.alignItems = "center";
+        nextSubPanel.style.justifyContent = 'center';
         nextSubPanel.style.flex = "none";
         nextSubPanel.style.width = "48px";
         nextSubPanel.style.color = "#AEAEAEFF";
         const nextSubPanelInner = document.createElement('div');
-            nextSubPanelInner.classList.add('material-icons');
-            nextSubPanelInner.innerText = 'keyboard_arrow_right';
-            nextSubPanelInner.style.fontSize = '48px';
+            nextSubPanelInner.style.content = "url(./../../media/right.svg)";
+            nextSubPanelInner.style.width = '40px';
             nextSubPanelInner.style.cursor = 'pointer';
             nextSubPanelInner.addEventListener('click', () => {
                 if(InfoPage == 0) {

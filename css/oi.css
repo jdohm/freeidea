@@ -1,3 +1,8 @@
+/* custom colors */
+:root {
+    --oi-logo-blue: #01c1eaff;
+}
+
 .oi-custom-greys {
     color: #AEAEAEFF!important;
     background-color: #403b3bd9!important;
