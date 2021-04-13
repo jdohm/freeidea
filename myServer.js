@@ -114,7 +114,7 @@ app.post("/submitComment", checkAuthenticated, async function (req, res, next) {
         res._headers.login,
         req.body.IdeaID,
         req.body.comment,
-        db_old
+          db.getDb()
       )
     );
   //elso only if we want to let people comment without login in!

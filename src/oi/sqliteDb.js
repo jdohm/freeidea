@@ -27,6 +27,14 @@ function connect(dbPath) {
 }
 
 /**
+  * function to get the opened db connection
+  * @returns {Object} - opened db
+  */
+function getDb(){
+    return db;
+}
+
+/**
  * function which returns all tags 
  * @returns {string[]} - list with all tags
  */
@@ -485,6 +493,7 @@ async function getUserByEmail(email, alsoCheckUserName = true) {
 
 module.exports = {
   connect,
+  getDb,
   getTopics,
   getSkills,
   getIdeas,
