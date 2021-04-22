@@ -162,8 +162,14 @@ async function getIdea(IdeaID, pure) {
       db.get(sql, [IdeaID], (err, rows) => {
         if (err) throw err;
         //if IdeaID was not found, cancel following
-        if (!rows) resolve();
-        if (pure) resolve(rows);
+          if (!rows) {
+              resolve();
+              return;
+          }
+          if (pure) {
+              resolve(rows);
+              return;
+          }
         let idearows = rows;
         let sql = `SELECT Tag FROM Idea_Tags WHERE Idea is ?`;
         db.all(sql, [IdeaID], (err, rows) => {
