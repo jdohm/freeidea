@@ -12,6 +12,16 @@
  * @param {string} ideaData.title - title of idea
  */
 function draw(ideaData){
+    let _ID, _title;
+    try{
+         _ID = ideaData.ID;
+        _title = ideaData.title;
+    }
+    catch (e){
+        console.log(e);
+        _ID = 0;
+        _title = 'error, please refresh';
+    }
     var SVG = `
     <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -23,12 +33,12 @@ function draw(ideaData){
         version="1.1"
     >
     <rect width="300" height="300" fill="#FFFFFF"/>
-    <text x="000" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
-    <text x="100" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
-    <text x="200" y="200" fill="#000000" font-size="2.0em">#${ideaData.ID}</text>
-    <text x="050" y="170" fill="#000000" transform="rotate(-90, 050, 170)" font-size="1.0em">${ideaData.title}</text>
-    <text x="150" y="170" fill="#000000" transform="rotate(-90, 150, 170)" font-size="1.0em">${ideaData.title}</text>
-    <text x="250" y="170" fill="#000000" transform="rotate(-90, 250, 170)" font-size="1.0em">${ideaData.title}</text>
+    <text x="000" y="200" fill="#000000" font-size="2.0em">#${_ID}</text>
+    <text x="100" y="200" fill="#000000" font-size="2.0em">#${_ID}</text>
+    <text x="200" y="200" fill="#000000" font-size="2.0em">#${_ID}</text>
+    <text x="050" y="170" fill="#000000" transform="rotate(-90, 050, 170)" font-size="1.0em">${_title}</text>
+    <text x="150" y="170" fill="#000000" transform="rotate(-90, 150, 170)" font-size="1.0em">${_title}</text>
+    <text x="250" y="170" fill="#000000" transform="rotate(-90, 250, 170)" font-size="1.0em">${_title}</text>
     </svg>
   `;
     return SVG;
