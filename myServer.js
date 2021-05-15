@@ -111,7 +111,14 @@ app.get("/getMakerS", checkAuthenticated, async function (req, res) {
 
 //get svgs
 app.get("/svgTest", async function (req, res) {
-  let ideaData = await db.getIdea(req.query.IdeaID, true);
+    let ideaData;
+    try{
+           ideaData = await db.getIdea(req.query.IdeaID, true);
+    } catch (e) {
+        console.log(e);
+        ideaData.ID = 0;
+        ideaData.title = "error, please reload";
+    }
     let SVG = svg.draw(ideaData);
   res.type("svg");
   res.send(SVG);

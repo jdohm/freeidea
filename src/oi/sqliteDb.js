@@ -251,7 +251,12 @@ async function getIdea(IdeaID, pure) {
           rows.forEach((row) => {
             tags.push(row.Tag);
           });
-          idearows.tags = tags;
+            try{
+                idearows.tags = tags;
+            }
+            catch (e) {
+                console.log(e);
+            }
           let sql = `SELECT Skill FROM Idea_Skills WHERE Idea is ?`;
           db.all(sql, [IdeaID], (err, rows) => {
             if (err) throw err;
@@ -259,7 +264,12 @@ async function getIdea(IdeaID, pure) {
             rows.forEach((row) => {
               crd.push(row.Skill);
             });
-            idearows.skills = crd;
+              try{
+                  idearows.skills = crd;
+              }
+              catch (e) {
+                  console.log(e);
+              }
             let sql = `SELECT User FROM Idea_User WHERE Idea is ?`;
             db.all(sql, [IdeaID], (err, rows) => {
               if (err) throw err;
