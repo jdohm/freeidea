@@ -69,27 +69,36 @@
     import { Quat } from './src/og/math/Quat.js';
     import { showInfo } from './src/oi/showInfo.js';
     import * as DrawIdeas from './src/oi/DrawIdeas.js';
+    import * as DrawMakerS from './src/oi/DrawMakerS.js';
     import * as SideIdea from './src/oi/SideIdea.js';
+    import * as SideMakerS from './src/oi/SideMakerS.js';
     import * as SideShowIdea from './src/oi/SideShowIdea.js';
+    import * as SideShowMakerS from './src/oi/SideShowMakerS.js';
     import * as SidePanel from './src/oi/SidePanel.js';
     import * as SideLoginRegister from './src/oi/SideLoginRegister.js';
 
-     //variable to save if user is logged in 
+     //variable to save if user is logged in
      window.ulogin = "false";
 
      window.SidePanel = SidePanel;
      window.SideIdea = SideIdea;
+     window.SideMakerS = SideMakerS;
      window.SideShowIdea = SideShowIdea;
+     window.SideShowMakerS = SideShowMakerS;
      window.SideLoginRegister = SideLoginRegister;
      window.DrawIdeas = DrawIdeas;
+     window.DrawMakerS = DrawMakerS;
      window.showInfo = showInfo;
 
      window.addEventListener("pageshow", (e) => {
          DrawIdeas.draw(pointLayer);
+         DrawMakerS.draw(pointLayer);
          //if link to Idea
          var urlParams = new URLSearchParams(window.location.search);
          if (urlParams.has('Idea')) {
              SideShowIdea.show(urlParams.get('Idea'));
+         } else if (urlParams.has('MakerS')){
+             SideShowMakerS.show(urlParams.get('MakerS'));
          }
          if (urlParams.has('user')) {
              showInfo();
@@ -138,6 +147,30 @@
         }
 	   };
 
+	   window.myCreateMakerS = function myCreateMakerS(lon, lat, id, tools, users){
+         if(!tools) tools = [];
+         if(!users) users = [];
+            let rotX = new Quat().setFromEulerAngles( -90+lat, 0, 0);
+            let rotY = new Quat().setFromAxisAngle(new Vec3(0,1,0), -lon*Math.PI/180);
+            pointLayer.add(new Entity({
+                'name': "Space" + id,
+                'lonlat': [lon, lat, 220000],
+                'sphere': {
+                    'radius': 55000,
+                    //rotate sphere to normal of globe
+                    'orientation': rotX.mul(rotY),
+                    "latBands": 3,
+                    "lonBands": 200,
+                    'scale': new Vec3(1.0,4.0,1.0),
+                    'color': [0.0, 0.0, 1.0, 1.0],
+                    "src": "./svgMakerS/?MakerSID=" + id
+                },
+                'properties': {
+                    'tools': tools,
+                    'user': users
+                }
+            }));
+	   };
         let pickingObject = null;
         let startClick = new Vec2(),
             startPos;
@@ -218,14 +251,24 @@
             let groundPos = globe.planet.getCartesianFromMouseTerrain();
             var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
             var name;
+            var tools;
             try{name = e.pickingObject.properties.name;}
             catch(err){console.log("name not found")};
-            if (name && name !== "mark") {
+            try{tools = e.pickingObject.properties.tools;}
+            catch(err){console.log("tools not found")};
+            if (name && name !== "mark" && !tools) {
                 console.log("name is: " + name);
                 //hide marker on map if last sidepanel was new idea panel
                 myHideMark();
                 SideShowIdea.show(e.pickingObject.properties.name);
 	          }
+            else if(name && name !== "mark" && tools){
+                //console.log("makerspace name is: " + name);
+                //hide marker on map if last sidepanel was new idea panel
+                myHideMark();
+                //console.log("subs: " + e.pickingObject.properties.name.substr(5));
+                SideShowMakerS.show(e.pickingObject.properties.name.substr(5));
+            }
 	          else if(groundPos !== null && ll !== null){//New Idea
                 SideIdea.show(ll);
 	    }

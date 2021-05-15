@@ -133,6 +133,9 @@ function show(ll) {
         </p>
     <p>This project is under development, your idea could be deleted at any time.</p>
     </form>
+
+    <button class="btn waves-effect waves-light oi-custom-greys oi-side-button-width" style="margin-bottom: 5px;" type="button" name="makers" onclick='SideMakerS.show(${lon},${lat});'>Create a Makerspace instead<i class="material-icons left">home</i>
+    </button>
 </div>
 <div style="flex-grow: 0;">
     <button class="btn waves-effect waves-light oi-custom-greys oi-side-button-width" style="margin-bottom: 5px;" type="button" name="back" onclick='SideIdea.save(${lon}, ${lat});'>Save<i class="material-icons left">save</i>

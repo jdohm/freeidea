@@ -44,7 +44,7 @@ async function getTopics() {
       let sql = `SELECT Name FROM Tags ORDER BY Name`;
       db.all(sql, [], (err, rows) => {
         if (err) throw err;
-        resolve(rows);
+        return resolve(rows);
       });
     });
   });
@@ -60,14 +60,30 @@ async function getSkills() {
       let sql = `SELECT Name FROM Skills ORDER BY Name`;
       db.all(sql, [], (err, rows) => {
         if (err) throw err;
-        resolve(rows);
+        return resolve(rows);
       });
     });
   });
 }
 
 /**
- * function which returns all ideas 
+ * function which returns all available tools
+ * @returns {string[]} - list with all tools
+ */
+async function getTools() {
+    return new Promise((resolve) => {
+        db.serialize(() => {
+            let sql = `SELECT Name FROM Tools ORDER BY Name`;
+            db.all(sql, [], (err, rows) => {
+                if (err) throw err;
+                return resolve(rows);
+            });
+        });
+    });
+}
+
+/**
+ * function which returns all ideas
  * @returns {Object[]} - array of idea objects
  * @property {string} lon - lon coordinate
  * @property {string} lat - lat coordinate
@@ -92,7 +108,35 @@ async function getIdeas() {
           idearows[key].skills = tmp.skills;
           idearows[key].user = tmp.user;
         }
-        resolve(idearows);
+        return resolve(idearows);
+      });
+    });
+  });
+}
+
+/**
+ * function which returns all makerspaces
+ * @returns {Object[]} - array of space objects
+ * @property {string} lon - lon coordinate
+ * @property {string} lat - lat coordinate
+ * @property {number} IdeaID - number of makerspace
+ * @property {string[]} tools - available tools at makerspace
+ * @property {string[]} users - users who registered the makerspace
+ */
+async function getMakerSs() {
+  return new Promise((resolve) => {
+    //read all places from Database
+    db.serialize(function () {
+      let sql = `SELECT lon, lat, MakerSID FROM PlacesMakerS ORDER BY lat`;
+      db.all(sql, [], async (err, rows) => {
+        if (err) throw err;
+        let makerSrows = rows;
+        for (let key in makerSrows) {
+          let tmp = await _addToolsUsers(makerSrows[key].MakerSID);
+          makerSrows[key].tools = tmp.tools;
+          makerSrows[key].user = tmp.user;
+        }
+        return resolve(makerSrows);
       });
     });
   });
@@ -135,10 +179,45 @@ async function _addTagsSkillsUsers(id) {
               users.push(row.User);
             });
             idearows.user = users;
-            resolve(idearows);
+            return resolve(idearows);
           });
         });
       });
+    });
+  });
+}
+
+/**
+ * function which returns tools and users for given makerspace
+ * this function is for internal use, and isn't exposed
+ * @param {number} id - number of makerspace
+ * @returns {Object}
+ * @property {String[]} tools - available tools at given makerspace
+ * @property {String[]} users - users who registered this makerspace
+ */
+async function _addToolsUsers(id) {
+    let makerSrows = { tools: [], user: [] };
+  return new Promise((resolve) => {
+    db.serialize(function () {
+      let sql = `SELECT Tool FROM MakerS_Tools WHERE MakerS is ?`;
+      db.all(sql, [id], (err, rows) => {
+        if (err) throw err;
+        let tools = [];
+        rows.forEach((row) => {
+          tools.push(row.Tool);
+        });
+        makerSrows.tools = tools;
+          let sql = `SELECT User FROM MakerS_User WHERE MakerS is ?`;
+          db.all(sql, [id], (err, rows) => {
+            if (err) throw err;
+            let users = [];
+            rows.forEach((row) => {
+              users.push(row.User);
+            });
+            makerSrows.user = users;
+            return resolve(makerSrows);
+          });
+        });
     });
   });
 }
@@ -162,8 +241,8 @@ async function getIdea(IdeaID, pure) {
       db.get(sql, [IdeaID], (err, rows) => {
         if (err) throw err;
         //if IdeaID was not found, cancel following
-        if (!rows) resolve();
-        if (pure) resolve(rows);
+        if (!rows) return resolve();
+        if (pure) return resolve(rows);
         let idearows = rows;
         let sql = `SELECT Tag FROM Idea_Tags WHERE Idea is ?`;
         db.all(sql, [IdeaID], (err, rows) => {
@@ -189,11 +268,56 @@ async function getIdea(IdeaID, pure) {
                 crd.push(row.User);
               });
               idearows.user = crd;
-              resolve(idearows);
+              return resolve(idearows);
             });
           });
         });
       });
+    });
+  });
+}
+
+/**
+ * function to fetch makerspace informations
+ * @param {number} MakerS - number of the makerspace
+ * @param {boolean} [pure=false] - if set to true, this function returns only ID, title and description
+ * @returns {Object} - makerspace object
+ * @property {number} ID - number of the makerspace
+ * @property {string} title - title of the makerspace
+ * @property {string} description - description of the makerspace
+ * @property {string[]} Tool - tools of the makerspace
+ * @property {string[]} User - users of the idea
+ */
+async function getMakerS(MakerS, pure) {
+  return new Promise((resolve) => {
+    db.serialize(function () {
+      let sql = `SELECT ID, title, description, address, contact, times FROM MakerS WHERE ID is ?`;
+      db.get(sql, [MakerS], (err, rows) => {
+        if (err) throw err;
+        //if MakerS was not found, cancel following
+        if (!rows) return resolve();
+        if (pure) return resolve(rows);
+        let makerSrows = rows;
+        let sql = `SELECT Tool FROM MakerS_Tools WHERE MakerS is ?`;
+        db.all(sql, [MakerS], (err, rows) => {
+          if (err) throw err;
+          let tools = [];
+          rows.forEach((row) => {
+            tools.push(row.Tool);
+          });
+          makerSrows.tools = tools;
+            let sql = `SELECT User FROM MakerS_User WHERE MakerS is ?`;
+            db.all(sql, [MakerS], (err, rows) => {
+              if (err) throw err;
+              let crd = [];
+              rows.forEach((row) => {
+                crd.push(row.User);
+              });
+              makerSrows.user = crd;
+              return resolve(makerSrows);
+            });
+          });
+        });
     });
   });
 }
@@ -217,8 +341,8 @@ async function saveVote(IdeaID, Upvote, Username) {
           4: Username,
         },
         function (err) {
-          if (err) resolve(err.message);
-          resolve("vote saved");
+          if (err) return resolve(err.message);
+          return resolve("vote saved");
         }
       );
     });
@@ -247,6 +371,65 @@ function DateAsString() {
 }
 
 /**
+ * function to register new makerspace
+ * @param {*} req - req data of incoming post request
+ * reads req.body.lon, req.body.lat, req.body.tools, req.body.mastodon and req.user.name
+ * req.body.name, reg.body.decription, reg.body.address, req.body.contact, req.body.times
+ * @returns {number} - id of newly created makerspace
+ */
+async function saveMakerS(req) {
+    return new Promise(async (resolve) => {
+        let id = await _saveMakerS(
+            req.body.name,
+            req.body.description,
+            req.body.address,
+            req.body.contact,
+            req.body.times);
+        if (!id) return resolve(false);
+        else {
+            await db.serialize(() => {
+                _savePlace(id, req.body.lon, req.body.lat, true);
+                _saveTags(id, req.body.tools, "tools");
+                _saveUser(id, req.user.name, true);
+            });
+            if (req.body.mastodon == "true") mastodon.post(id, req);
+            return resolve(id);
+        }
+    });
+}
+
+/**
+ * intern function to save makerspace title, description, address and contact
+ * @param {string} title - title to be saved
+ * @param {string} description - description to be saved
+ * @param {string} address - address to be saved
+ * @param {string} contact - contact to be saved
+ * @param {string} times - opening times to be saved
+ * @returns {number} - id of newly created makerspace
+ */
+async function _saveMakerS(title, description, address, contact, times) {
+    return new Promise((resolve) => {
+        db.run(
+            "INSERT INTO MakerS(title,description,address,contact,times) VALUES(?1,?2,?3,?4,?5)",
+            {
+                1: title,
+                2: description,
+                3: address,
+                4: contact,
+                5: times,
+            },
+            function(error) {
+                if (error) {
+                    console.log("error while saving new makerspace: " + error);
+                    return resolve(false);
+                }
+                return resolve(this.lastID);
+            }
+        );
+    });
+}
+
+/**
  * function to save new idea
  * @param {*} req - req data of incoming post request
  * reads req.body.lon, req.body.lat, req.body.tags, req.body.skills, req.body.mastodon and req.user.name
@@ -255,16 +438,16 @@ function DateAsString() {
 async function saveIdea(req) {
   return new Promise(async (resolve) => {
     let id = await _saveIdea(req.body.nameText, req.body.ideaText);
-    if (!id) resolve(false);
+    if (!id) return resolve(false);
     else {
       await db.serialize(() => {
         _savePlace(id, req.body.lon, req.body.lat);
-        _saveTags(id, req.body.tags);
-        _saveSkills(id, req.body.skills);
+          _saveTags(id, req.body.tags, "topics");
+          _saveTags(id, req.body.tags, "skills");
         _saveUser(id, req.user.name);
       });
       if (req.body.mastodon == "true") mastodon.post(id, req);
-      resolve(id);
+      return resolve(id);
     }
   });
 }
@@ -286,9 +469,9 @@ async function _saveIdea(title, description) {
       function(error) {
         if (error) {
           console.log("error while saving new idea: " + error);
-          resolve(false);
+          return resolve(false);
         }
-        resolve(this.lastID);
+        return resolve(this.lastID);
       }
     );
   });
@@ -299,52 +482,75 @@ async function _saveIdea(title, description) {
  * @param {number} id - id of idea
  * @param {string} lon - lon coordinate to be saved
  * @param {string} lat - lat coordinate to be saved
- * @returns 
+ * @param {boolean} [makerspace=false] - set if place belongs to a makerspace
+ * @returns
  */
-async function _savePlace(id, lon, lat) {
+async function _savePlace(id, lon, lat, makerspace) {
   return new Promise((resolve) => {
+      let sqlc = "INSERT INTO Places(lon,lat,IdeaID) VALUES(?1,?2,?3)";
+      if(makerspace) sqlc = "INSERT INTO PlacesMakerS(lon,lat,MakerSID) VALUES(?1,?2,?3)";
     db.run(
-      "INSERT INTO Places(lon,lat,IdeaID) VALUES(?1,?2,?3)",
+      sqlc,
       {
         1: lon,
         2: lat,
         3: id,
       },
       function (err) {
-        if (err) resolve(err.message);
-        resolve;
+        if (err) return resolve(err.message);
+        return;
       }
     );
   });
 }
 
 /**
- * intern function to save tags associated with newly created idea
- * @param {number} id - id of idea
+ * intern function to save tags associated with newly created idea/makerspace
+ * @param {number} id - id of idea/makerspace
  * @param {string} tags - csv string of tags to be saved
- * @returns 
+ * @param {string} type - topics, skills, tools, this value will determine
+ * if the tags are saved as topics or skills (used with ideas)
+ * or as tools (used with makerspaces)
+ * @returns
  */
-async function _saveTags(id, tags) {
+async function _saveTags(id, tags, type) {
+    let sqlc1, sqlc2;
+    if(type == "topics") {
+        sqlc1="INSERT OR IGNORE INTO Tags(Name) VALUES(?1)";
+        sqlc2= "INSERT OR IGNORE INTO Idea_Tags(Idea,Tag) VALUES(?1, ?2)";
+        console.log("topics");
+    }else if (type == "skills"){
+        sqlc1="INSERT OR IGNORE INTO Skills(Name) VALUES(?1)";
+        sqlc2="INSERT OR IGNORE INTO Idea_Skills(Idea,Skill) VALUES(?1, ?2)";
+        console.log("skills");
+    }else if (type == "tools"){
+        sqlc1="INSERT OR IGNORE INTO Tools(Name) VALUES(?1)";
+        sqlc2="INSERT OR IGNORE INTO MakerS_Tools(MakerS,Tool) VALUES(?1, ?2)";
+        console.log("tools");
+    }else{
+        console.log("error");
+        sqlc1="INSERT OR IGNORE INTO Tags(Name) VALUES(?1)";
+        sqlc2= "INSERT OR IGNORE INTO Idea_Tags(Idea,Tag) VALUES(?1, ?2)";
+    }
   return new Promise((resolve) => {
     let tagArray = tags.split(",");
     tagArray.forEach(function (item, index) {
       if (item.trim() != "") {
         db.run(
-          "INSERT OR IGNORE INTO Tags(Name) VALUES(?1)",
+          sqlc1,
           {
             1: item.trim(),
           },
           function (err) {
-            if (err) resolve(err.message);
+            if (err) return resolve(err.message);
             db.run(
-              "INSERT OR IGNORE INTO Idea_Tags(Idea,Tag) VALUES(?1, ?2)",
+              sqlc2,
               {
                 1: id,
                 2: item.trim(),
               },
               function (err) {
-                if (err) resolve(err.message);
-                resolve;
+                if (err) return resolve(err.message);
               }
             );
           }
@@ -355,59 +561,25 @@ async function _saveTags(id, tags) {
 }
 
 /**
- * intern function to save needed skills associated with newly created idea
- * @param {number} id - id of idea
- * @param {string} skills - csv string of needed skills to be saved
- * @returns 
- */
-async function _saveSkills(id, skills) {
-  return new Promise((resolve) => {
-    var skillsArray = skills.split(",");
-    skillsArray.forEach(function (item, index) {
-      if (item.trim() != "") {
-        db.run(
-          "INSERT OR IGNORE INTO Skills(Name) VALUES(?1)",
-          {
-            1: item.trim(),
-          },
-          function (err) {
-            if (err) resolve(err.message);
-            db.run(
-              "INSERT OR IGNORE INTO Idea_Skills(Idea,Skill) VALUES(?1, ?2)",
-              {
-                1: id,
-                2: item.trim(),
-              },
-              function (err) {
-                if (err) resolve(err.message);
-                resolve;
-              }
-            );
-          }
-        );
-      }
-    });
-  });
-}
-
-/**
- * intern function to save user which created the new idea
- * @param {number} id - id of idea
+ * intern function to save user which created the new idea/makerpace
+ * @param {number} id - id of idea/makerspace
  * @param {string} username - of user to be saved as author of idea
- * @returns 
+ * @param {boolean} [makerspace=false] - set if place belongs to a makerspace
+ * @returns
  */
-async function _saveUser(id, username) {
+async function _saveUser(id, username, makerspace=false) {
   return new Promise((resolve) => {
+      let sqlc = "INSERT INTO Idea_User(Idea, User, Role) VALUES(?1, ?2, ?3)";
+      if(makerspace) sqlc = "INSERT INTO MakerS_User(MakerS, User, Role) VALUES(?1, ?2, ?3)";
     db.run(
-      "INSERT INTO Idea_User(Idea, User, Role) VALUES(?1, ?2, ?3)",
+      sqlc,
       {
         1: id,
         2: username,
         3: 0,
       },
       function (err) {
-        if (err) resolve(err.message);
-        resolve;
+        if (err) return resolve(err.message);
       }
     );
   });
@@ -438,9 +610,9 @@ async function saveUser(name, email, pwHash, matrixUser) {
       function (err) {
         if (err) {
           console.log(err.message);
-          resolve({ message: err.message });
+          return resolve({ message: err.message });
         }
-        resolve({message: "success"});
+        return resolve({message: "success"});
       }
     );
   });
@@ -460,7 +632,7 @@ async function getMatrixUserByName(username, db) {
     db.get(sql, [username], (err, rows) => {
       if (err) throw err;
       console.log(rows);
-      resolve(rows);
+      return resolve(rows);
     });
   });
 }
@@ -484,9 +656,9 @@ async function getUserByEmail(email, alsoCheckUserName = true) {
         sql = `SELECT name, email, pwHash password FROM User WHERE name is ?`;
         db.get(sql, [email], (err, rows) => {
           if (err) throw err;
-          resolve(rows);
+          return resolve(rows);
         });
-      } else resolve(rows);
+      } else return resolve(rows);
     });
   });
 }
@@ -496,10 +668,14 @@ module.exports = {
   getDb,
   getTopics,
   getSkills,
+  getTools,
   getIdeas,
   getIdea,
+  getMakerSs,
+  getMakerS,
   saveVote,
   saveIdea,
+  saveMakerS,
   saveUser,
   getMatrixUserByName,
   getUserByEmail,

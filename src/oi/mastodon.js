@@ -9,17 +9,52 @@ const request = require("request");
 /**
  * function to post new idea on mastodon
  * @param {number} id - number of idea
- * @param {Object} req - req of post request 
+ * @param {Object} req - req of post request
  * reads req.body.mastodon, req.body.nameText, req.body.ideaText, req.body.tags
- * @returns 
+ * @returns
  */
 async function post(id, req) {
   return new Promise( async (resolve) => {
-    if (req.body.mastodon !== "true") resolve;
+    if (req.body.mastodon !== "true") return;
     let textBody = _createStatus(id, req);
     await _send(textBody, "public");
-    resolve;
+    return;
   });
+}
+
+/**
+ * function to post new makerspace on mastodon
+ * @param {number} id - number of makerspace
+ * @param {Object} req - req of post request
+ * reads req.body.mastodon, req.body.name
+ * @returns
+ */
+async function postMakerS(id, req) {
+    return new Promise( async (resolve) => {
+        if (req.body.mastodon !== "true") return;
+        let textBody = _createMakerSStatus(id, req);
+        await _send(textBody, "public");
+        return;
+    });
+}
+
+/**
+ * intern function to create status for newly registered makerspace
+ * @param {number} id - number of makerspace
+ * @param {Object} req - req of post request
+ * @returns {String} - status Text to be send to mastodon
+ */
+function _createMakerSStatus(id, req) {
+    // max 500 chars in total
+    // 425 for title and description
+    // 25 for the line with the link (2x \n + links count as 23)
+    // 50 for tags
+    let statusText =
+        _truncate("We happily welcome" + req.body.name + "to OpenIdea \n see the new entry at:", 425) +
+        "\n" +
+        "https://openidea.io/?MakerS=" +
+        id;
+    return statusText;
 }
 
 /**
@@ -111,4 +146,5 @@ async function _send(statusText, vis, URL, ACCESS_TOKEN) {
 
 module.exports = {
     post,
+    postMakerS,
 };

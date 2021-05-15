@@ -93,9 +93,20 @@ app.get("/getSkills", async function (req, res) {
   res.json(await db.getSkills());
 });
 
+//respond with available tools
+app.get("/getTools", async function (req, res) {
+    res.json(await db.getTools());
+});
+
 //respond to getIdeas GET request
 app.get("/getIdeas", checkAuthenticated, async function (req, res) {
   res.json(await db.getIdeas());
+});
+
+//respond to getMakerS GET request
+app.get("/getMakerS", checkAuthenticated, async function (req, res) {
+    console.log("reached");
+    res.json(await db.getMakerSs());
 });
 
 //get svgs
@@ -104,6 +115,14 @@ app.get("/svgTest", async function (req, res) {
     let SVG = svg.draw(ideaData);
   res.type("svg");
   res.send(SVG);
+});
+
+//get svgs
+app.get("/svgMakerS", async function (req, res) {
+    let MakerS = await db.getMakerS(req.query.MakerSID, true);
+    let SVG = svg.draw(MakerS);
+    res.type("svg");
+    res.send(SVG);
 });
 
 //endpoint for new comments
@@ -130,6 +149,14 @@ app.post("/getIdea", checkAuthenticated, async function (req, res) {
   }
 });
 
+//respond to getMakerS POST request
+app.post("/getMakerS", checkAuthenticated, async function (req, res) {
+    if (!req.body.MakerSID) res.json();
+    else {
+        res.json(await db.getMakerS(req.body.MakerSID));
+    }
+});
+
 //receive votes from client and save them in db
 app.post("/submitVote", checkAuthenticatedCancel, async function (req, res) {
   res.send(await db.saveVote(req.body.IdeaID, req.body.upvote, req.user.name));
@@ -138,6 +165,11 @@ app.post("/submitVote", checkAuthenticatedCancel, async function (req, res) {
 //receive new ideas from client and save them in db
 app.post("/submitIdea", checkAuthenticatedCancel, async function (req, res) {
   res.json(await db.saveIdea(req));
+});
+
+//receive new registration of makerspace from client and save them in db
+app.post("/submitMakerS", checkAuthenticatedCancel, async function (req, res) {
+    res.json(await db.saveMakerS(req));
 });
 
 //support request to matrix room

@@ -49,11 +49,14 @@ function show(IdeaID) {
             });
             //cactus chat end
             document.getElementById("id_title").innerHTML = obj.title;
+            //add optional smaller title, which is activated when pressing on the bigger title
+            //this helps in situations where the normal title hides to much of the other content
+            document.getElementById("id_title2").innerHTML = obj.title;
             document.getElementById("id_title").addEventListener('click', () => {
                 document.getElementById("id_title").classList.add('hide');
                 document.getElementById("id_title2").classList.remove('hide');
             });
-            document.getElementById("id_title2").innerHTML = obj.title;
+            //extra title end
             document.getElementById("id_description").innerHTML = obj.description;
             document.getElementById("id_tags").innerHTML = "<span>Topics: </span> ";
             obj.tags.forEach((dat) => {

@@ -29,6 +29,17 @@ const searchSkills = async query => {
     } else return neededSkill;
 };
 
+let searchTool;
+
+const searchTools = async query => {
+    if(!searchTool){
+        return searchTool = fetch(`./../getTools/`)
+            .then(response => response.json())
+            .then(json => json.map(tool => ({id: tool.Name})))
+            .catch(_ => []);
+    } else return searchTool;
+};
+
 const generateOption = _ => {
   const option = document.createElement('option');
   option.value = _.id;
