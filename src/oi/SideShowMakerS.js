@@ -101,6 +101,7 @@ function show(MakerSID) {
     <div id="join-room">Join this comment section on your favorit matrix chat app! </br><a href="https://matrix.to/#/#comments_openidea.io_Makerspace#${MakerSID}:cactus.chat" target="_blank">#comments_openidea.io_Makerspace#<span style=\"display: inline-block; width: 0px;\"></span>${MakerSID}:cactus.chat</a></div>
 
 </div>
+<div style="flex-grow: 0;">
     <H6 id="login_placeholder" style="margin-top: 5px;margin-bottom: 5px;"></H6>
 <button class="btn waves-effect waves-light oi-custom-greys" style="width:65%; margin: 0% 0.5%;" type="button" name="back" onclick='SidePanel.hide();'>Back<i class="material-icons left">arrow_back</i>
   </button><button class="btn waves-effect waves-light oi-custom-greys" style="width:33%; margin: 0% 0.5%;" type="button" name="back" onclick='SideShowIdea.showSupport(${MakerSID})'>Support request</button>
