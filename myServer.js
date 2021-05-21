@@ -32,9 +32,9 @@ initializePassport(passport, db.getUserByEmail);
 
 //options for https server
 var options = {
-  key: fs.readFileSync("/etc/letsencrypt/live/freeidea.de/privkey.pem"),
-  cert: fs.readFileSync("/etc/letsencrypt/live/freeidea.de/cert.pem"),
-  ca: fs.readFileSync("/etc/letsencrypt/live/freeidea.de/chain.pem"),
+  key: fs.readFileSync("/etc/letsencrypt/live/freeidea.info/privkey.pem"),
+  cert: fs.readFileSync("/etc/letsencrypt/live/freeidea.info/cert.pem"),
+  ca: fs.readFileSync("/etc/letsencrypt/live/freeidea.info/chain.pem"),
 };
 
 //make URL encoded data accessible inside get/post function
