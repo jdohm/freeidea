@@ -285,14 +285,24 @@
          let groundPos = globe.planet.getCartesianFromMouseTerrain();
          var ll = globe.planet.getLonLatFromPixelTerrain(e, true);
          var name;
+         var tools;
          try{name = e.pickingObject.properties.name;}
          catch(err){console.log("name not found")};
-         if (name && name !== "mark") {
+             try{tools = e.pickingObject.properties.tools;}
+             catch(err){console.log("tools not found")};
+         if (name && name !== "mark" && !tools) {
              console.log("name is: " + name);
              //hide marker on map if last sidepanel was new idea panel
              myHideMark();
              SideShowIdea.show(name);
 	       }
+         else if(name && name !== "mark" && tools){
+                 //console.log("makerspace name is: " + name);
+                 //hide marker on map if last sidepanel was new idea panel
+                 myHideMark();
+                 //console.log("subs: " + e.pickingObject.properties.name.substr(5));
+                 SideShowMakerS.show(e.pickingObject.properties.name.substr(5));
+             }
 	       else if(groundPos !== null && ll !== null){//New Idea
              SideIdea.show(ll);
 	       }
