@@ -73,6 +73,50 @@ input.oi-button {
     content:url(./../media/filter_active_mo.svg);
 }
 
+.oi-filterM-button {
+    transition: all 0.5s;
+    height: 40px;
+    width: 40px;
+    content:url(./../media/filter_makerspace.svg);
+}
+
+.oi-filterM-button:hover {
+    content:url(./../media/filter_makerspace_mo.svg);
+    box-shadow: 0 0 10px #474e52;
+}
+
+.oi-filterM-button-active {
+    height: 40px;
+    width: 40px;
+    content:url(./../media/filter_makerspace_active.svg);
+}
+
+.oi-filterM-button-active:hover {
+    content:url(./../media/filter_makerspace_active_mo.svg);
+}
+
+.oi-filterI-button {
+    transition: all 0.5s;
+    height: 40px;
+    width: 40px;
+    content:url(./../media/filter_idea.svg);
+}
+
+.oi-filterI-button:hover {
+    content:url(./../media/filter_idea_mo.svg);
+    box-shadow: 0 0 10px #474e52;
+}
+
+.oi-filterI-button-active {
+    height: 40px;
+    width: 40px;
+    content:url(./../media/filter_idea_active.svg);
+}
+
+.oi-filterI-button-active:hover {
+    content:url(./../media/filter_idea_active_mo.svg);
+}
+
 .oi-link {
     transition: all 0.5s;
     color: blue;

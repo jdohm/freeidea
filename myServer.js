@@ -105,7 +105,6 @@ app.get("/getIdeas", checkAuthenticated, async function (req, res) {
 
 //respond to getMakerS GET request
 app.get("/getMakerS", checkAuthenticated, async function (req, res) {
-    console.log("reached");
     res.json(await db.getMakerSs());
 });
 

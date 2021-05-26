@@ -55,8 +55,16 @@ function filterIdeas(pointLayer, filter) {
         // console.log(pointLayer._entities[key].id);
         //check if tags property exists (to ignore mark and other non idea entities)
         if(pointLayer._entities[key].properties.tags){
-            //hide idea
-            pointLayer._entities[key].setVisibility(false);
+            //hide ideas to apply filter if filter value isn't IdeasOnly
+            //(in this case all ideas should be visible)
+            if(!(filter.includes("IdeasOnly") && filter.length == 1)){
+                pointLayer._entities[key].setVisibility(false);
+            }
+            //show all ideas if only IdeasOnly is set as a filter
+            else if(filter.includes("IdeasOnly") && filter.length == 1){
+                pointLayer._entities[key].setVisibility(true);
+            }
+            if(!filter.includes("MakerspacesOnly")){
             //check each filter value
             for (var ke2 in filter){
                 //if tag includes filter value show entity
@@ -64,12 +72,22 @@ function filterIdeas(pointLayer, filter) {
                     pointLayer._entities[key].setVisibility(true);
                 }
             }
+            }
+        }
+        //hide all makerspaces if IdeasOnly is active
+        else if(filter.includes("IdeasOnly") && pointLayer._entities[key].properties.tools){
+            pointLayer._entities[key].setVisibility(false);
+        }
+        //show all makerspaces if IdeasOnly isn't active
+        else if(!filter.includes("IdeasOnly") && pointLayer._entities[key].properties.tools){
+            pointLayer._entities[key].setVisibility(true);
         }
      }}
     else{
         for (var key in pointLayer._entities){
-            if(pointLayer._entities[key].properties.tags)
-               pointLayer._entities[key].setVisibility(true);
+            if(pointLayer._entities[key].properties.tags || pointLayer._entities[key].properties.tools){
+                pointLayer._entities[key].setVisibility(true);
+            }
             document.getElementById("filter-btn").classList.remove("oi-filter-button-active");
             document.getElementById("filter-btn").classList.add("oi-filter-button");
         }

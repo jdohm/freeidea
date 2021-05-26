@@ -26,13 +26,15 @@
             </div>
             <div style="position: absolute; bottom: 193px; right: 12px;" alt="info" id="info-btn" class="oi-info-button oi-button" onclick='showInfo();'></div>
 
-            <div style="position: absolute; top: 12px; left: 12px;">
+            <div id="filterbody" style="position: absolute; top: 12px; left: 12px; width: clamp(0px, 100% - 176px, 900px);">
                 <label for="tag" class="hide">
                     <select id="tag" class="hide" multiple="multiple"></select>
                 </label>
                 <form style="transition: all 2s;" id="filterMain" href="#">
-                    <input type="text" id="tag_query" style="display: inline-block; width: 0px; transition: all 2s; height: 34px; border-radius: 5px; max-width: 40%; background-color: #403b3bd9; color: #AEAEAEFF"></input>
+                    <input type="text" id="tag_query" style="display: inline-block; width: 0px; transition: all 2s; height: 34px; border-radius: 5px; background-color: #403b3bd9; color: #AEAEAEFF"></input>
                     <div style="display: inline; margin-bottom: -13px; margin-left: -5px;" alt="filter" id="filter-btn" class="oi-filter-button oi-button"></div>
+                    <div style="display: none; margin-bottom: -13px; margin-left: 5px;" alt="filterSpaces" id="filterSpaces-btn" class="oi-filterM-button oi-button"></div>
+                    <div style="display: none; margin-bottom: -13px; margin-left: 5px;" alt="filterSpaces" id="filterIdeas-btn" class="oi-filterI-button oi-button"></div>
                 </form>
 
                 <div class="col s12">

@@ -17,22 +17,34 @@ document.getElementById('filterMain').onsubmit = function () {
     return false;
 };
 document.getElementById('filterMain').addEventListener('click', () => {
-    document.getElementById('tag_query').style.width = "calc(100% - 49px)";
+    //document.getElementById('tag_query').style.width = "clamp(100px, 100vw, 900px)";
+    document.getElementById('tag_query').style.width = "clamp(120px, 100% - 47px*3, 100% - 47px*3)";
     document.getElementById('tag_query').style.borderLeft = "3px solid #9e9e9e";
     document.getElementById('tag_query').style.borderTop = "3px solid #9e9e9e";
     document.getElementById('tag_query').style.borderBottom = "3px solid #9e9e9e";
+    document.getElementById('filterSpaces-btn').style.display = "inline";
+    document.getElementById('filterIdeas-btn').style.display = "inline";
     /* document.getElementById('testT').style.display = "inline-block";
     * document.getElementById('testT').style.transform = "scale(1)"; */
 });
-document.getElementById('filterMain').addEventListener('focusout', () => {
+document.getElementById('filterbody').addEventListener('focusout', () => {
     document.getElementById('tag_query').style.width = "0px";
     document.getElementById('tag_query').style.borderLeft = "0px solid #9e9e9e";
     document.getElementById('tag_query').style.borderTop = "0px solid #9e9e9e";
     document.getElementById('tag_query').style.borderBottom = "0px solid #9e9e9e";
+    document.getElementById('filterSpaces-btn').style.display = "none";
+    document.getElementById('filterIdeas-btn').style.display = "none";
     /* document.getElementById('testT').style.transform = "scale(0)"; */
     /* document.getElementById('testT').style.display = "none"; */
 });
-
+//add function to show only makerspaces button
+document.getElementById('filterSpaces-btn').addEventListener('click', () => {
+    _OnlyMakerspaces();
+});
+//add function to show only ideas button
+document.getElementById('filterIdeas-btn').addEventListener('click', () => {
+    _OnlyIdeas();
+});
 
 const generateFilterIcon = _ => {
   const i = document.createElement('i');
@@ -105,3 +117,25 @@ new autoComplete({
   placeHolder: "Filter for topic",
   selector: "#tag_query",
 });
+
+function _OnlyIdeas(){
+    let stringT = {id: "IdeasOnly"};
+    const chip = generateChip(stringT);
+    chip.appendChild(generateFilterIcon(stringT));
+    document.getElementById('tag_chips').appendChild(chip);
+    document.getElementById('tag').add(generateOption(stringT));
+    filterArray.push(stringT.id);
+    DrawIdeas.filterIdeas(window.p, filterArray);
+    console.log("filtering for: " + filterArray);
+}
+
+function _OnlyMakerspaces(){
+    let stringT = {id: "MakerspacesOnly"};
+    const chip = generateChip(stringT);
+    chip.appendChild(generateFilterIcon(stringT));
+    document.getElementById('tag_chips').appendChild(chip);
+    document.getElementById('tag').add(generateOption(stringT));
+    filterArray.push(stringT.id);
+    DrawIdeas.filterIdeas(window.p, filterArray);
+    console.log("filtering for: " + filterArray);
+}
